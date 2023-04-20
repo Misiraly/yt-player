@@ -123,7 +123,10 @@ def sort_token(search_value, list_of_strings, cutoff=None, method=1):
 
 
 def token_distance(search_value, text, cutoff=5):
-    """ """
+    """
+    Calculate the tokenized distance of for each pair of strings and create
+    a list of sorted match values.
+    """
     search_tokens, text_tokens = tokenize_1(search_value), tokenize_1(text)
     s_length, t_length = len(search_tokens), len(text_tokens)
     distance_list = []
@@ -158,9 +161,7 @@ def token_distance_two(search_value, text, cutoff=5):
 
 
 def main():
-    doc = (
-        r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\modules\music_lib - arch.txt"
-    )
+    doc = "music_lib - arch.txt"
     list_of_strings = []
     with open(doc) as r:
         for line in r:

@@ -48,7 +48,8 @@ def count(seconds, v: Value):
 def ask(v: Value):
     key = v.value
     while key != "q":
-        # if we don't check for this, then the Process actually DOESN'T STOP or FUCKS UP or smth even after TERMINATING IT. Cuh
+        # if we don't check for this, then the Process actually DOESN'T STOP or
+        # FUCKS UP or smth even after TERMINATING IT. Cuh
         if msvcrt.kbhit():
             key = msvcrt.getch().decode("ASCII").lower()
             v.value = key
@@ -96,9 +97,8 @@ class ProgressBar:
         if key in STATUS_CHAR and key != "n":
             self.key = key
         self.time_bar = formatted_time(self.c_time)
-        progress = (
-            STATUS_ICON[self.key] + " " + self.time_bar + bar + neg_bar + self.full_time
-        )
+        progress = STATUS_ICON[self.key] + " " + self.time_bar + bar + neg_bar
+        progress = progress + self.full_time
         print(progress, end="\r")
 
 

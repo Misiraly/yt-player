@@ -1,14 +1,10 @@
-abc = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\modules\abc.txt"
+import pathlib
 
 
-class Letter:
-    def __init__(self, width, height, lines):
-        self.width = width
-        self.height = height
-        self.lines = lines
-
-    def segg():
-        pass
+cd = pathlib.Path().resolve()
+abc = cd / "modules/abc.txt"
+if __name__ == "__main__":
+    abc = "abc.txt"
 
 
 def line_breaker(text, position):
@@ -39,7 +35,8 @@ def centered(single_line: str, right_limit: int, white_space=" "):
     """
     assert (
         len(single_line) <= right_limit
-    ), f"The lenght of the string ({single_line}) is greater than the right limit specified ({right_limit})"
+    ), f"""The lenght of the string ({single_line}) is greater than the right
+    limit specified ({right_limit})"""
     residue = right_limit - len(single_line)
     r_half = residue // 2
     l_half = residue - r_half

@@ -7,10 +7,7 @@ import vlc
 import lib_sorter as lib
 from modules import formatter
 
-# import threading
-
-# from random import randint
-
+# an obsolete version of ui_first.py. Keeping it for idea's sake
 
 music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
 EXIT_CHARS = {"q", "exit"}
@@ -52,8 +49,6 @@ def player(scr):
     seconds = get_seconds(video.duration)
     print("video in seconds: " + str(seconds))
     print("video time: " + str(video.duration))
-    # x = threading.Thread(target=thread_end_video, args=(seconds,media,), daemon=True)
-    # x.start()
     while key != ord("q"):
         key = scr.getch()
         print(key)
