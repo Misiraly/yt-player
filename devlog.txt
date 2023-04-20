@@ -1,1 +1,6 @@
 My first entry to the devlog.
+
+-------------------------------------------------------------------------------
+20230420
+I am not sure how to do this, I think I will try to be conservative with the
+messages and not delete them.
