@@ -1,5 +1,6 @@
-from modules import formatter
 from datetime import datetime
+
+from modules import formatter
 
 """
 Created on Thur Nov 24 15:00:41 2022

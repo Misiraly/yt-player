@@ -1,14 +1,16 @@
 import curses
+import time
 
 import pafy
 import vlc
-import time
+
+import lib_sorter as lib
+from modules import formatter
+
 # import threading
 
 # from random import randint
 
-import lib_sorter as lib
-from modules import formatter
 
 music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
 EXIT_CHARS = {"q", "exit"}
@@ -29,13 +31,14 @@ def get_seconds(formatted_input: str = 0):
         print("[INFO] This has no length.")
         return 0
     _temp = formatted_input.split(":")
-    return int(_temp[0])*3600 + int(_temp[1])*60 + int(_temp[2])
+    return int(_temp[0]) * 3600 + int(_temp[1]) * 60 + int(_temp[2])
 
-    
+
 def thread_end_video(media, seconds: int = 0):
     time.sleep(seconds)
     media.stop()
     return "q"
+
 
 def player(scr):
     curses.resize_term(10, 60)
@@ -122,4 +125,4 @@ if __name__ == "__main__":
         curses.wrapper(player)
         lib.inwriter(video.title, url, video.duration)
         print("\n***(bideo emth...! щ(`Д´щ;) )***")
-        print("-"*80+"\n")
+        print("-" * 80 + "\n")

@@ -32,17 +32,19 @@ def line_breaker(text, position):
         pretty.append(string)
     return pretty
 
-    
+
 def centered(single_line: str, right_limit: int, white_space=" "):
     """
     Centers a single line to the middle of a 'right_limit' long line.
     """
-    assert len(single_line) <= right_limit, f"The lenght of the string ({single_line}) is greater than the right limit specified ({right_limit})"
+    assert (
+        len(single_line) <= right_limit
+    ), f"The lenght of the string ({single_line}) is greater than the right limit specified ({right_limit})"
     residue = right_limit - len(single_line)
-    r_half = residue//2
+    r_half = residue // 2
     l_half = residue - r_half
-    return white_space*l_half + single_line + white_space*r_half
-    
+    return white_space * l_half + single_line + white_space * r_half
+
 
 def raw_abc_to_abc():
     with open(abc, "r", encoding="utf-8") as r:

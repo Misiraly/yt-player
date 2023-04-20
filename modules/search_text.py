@@ -93,28 +93,33 @@ def sort_lev_jac(search_value, list_of_strings):
 
 def sort_token(search_value, list_of_strings, cutoff=None, method=1):
     sorted = pd.DataFrame(columns=["string", "lev", "jac", "comb", "token"])
-    if method == 1:    
+    if method == 1:
         for string in list_of_strings:
             mel = melamed_distance_np(search_value, string)
             jac = jaccard_similarity(search_value, string)
             comb = mel * jac
             token_d = token_distance(search_value, string)
             sorted = sorted.append(
-                {"string": string, "lev": mel, "jac": jac, "comb": comb, "token": token_d},
+                {
+                    "string": string,
+                    "lev": mel,
+                    "jac": jac,
+                    "comb": comb,
+                    "token": token_d,
+                },
                 ignore_index=True,
             )
     else:
         for string in list_of_strings:
             token_d = token_distance_two(search_value, string)
             sorted = sorted.append(
-                {"string": string, "token": token_d},ignore_index=True,
+                {"string": string, "token": token_d},
+                ignore_index=True,
             )
-                
+
     if cutoff is not None:
         return sorted.sort_values(by=["token"]).head(cutoff)
     return sorted.sort_values(by=["token"])
-    
-    
 
 
 def token_distance(search_value, text, cutoff=5):
@@ -122,25 +127,25 @@ def token_distance(search_value, text, cutoff=5):
     search_tokens, text_tokens = tokenize_1(search_value), tokenize_1(text)
     s_length, t_length = len(search_tokens), len(text_tokens)
     distance_list = []
-    # 
+    #
     for token1 in search_tokens:
         for token2 in text_tokens:
             distance_list.append(melamed_distance_np(token1, token2))
     distance_list.sort()
-    distance_list = [d/2**i for i,d in enumerate(distance_list)]
+    distance_list = [d / 2**i for i, d in enumerate(distance_list)]
     n = len(distance_list)
-    rec_norm = -2*(0.5**(n+1) - 1 )
+    rec_norm = -2 * (0.5 ** (n + 1) - 1)
     # distance_list = np.prod(distance_list[:10])
     # print(distance_list)
-    return np.sum(distance_list)/rec_norm
+    return np.sum(distance_list) / rec_norm
     # return np.prod(distance_list[:10])
-        
-        
+
+
 def token_distance_two(search_value, text, cutoff=5):
     """ """
     search_tokens, text_tokens = tokenize_1(search_value), tokenize_1(text)
     s_length, t_length = len(search_tokens), len(text_tokens)
-    norm = len(search_tokens)/len(text_tokens)
+    norm = len(search_tokens) / len(text_tokens)
     distance_list = []
     # print(text_tokens, search_tokens)
     for token1 in search_tokens:
@@ -149,7 +154,7 @@ def token_distance_two(search_value, text, cutoff=5):
     distance_list.sort()
     # distance_list = [d/2**(i+1) for i, d in enumerate(distance_list)]
     # print(distance_list)
-    return norm*np.sum(distance_list)
+    return norm * np.sum(distance_list)
 
 
 def main():
