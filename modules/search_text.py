@@ -2,12 +2,85 @@ import numpy as np
 import pandas as pd
 import regex as re
 
+SEP_CHAR = {";", ":", "-", "+", ".", "?", "!", ","}
+IGNORE_CHAR = {
+    "'",
+    '"',
+    "”",
+    "(",
+    ")",
+    "<",
+    ">",
+    "[",
+    "]",
+    "{",
+    "}",
+    "/",
+    "\\",
+}
+REPLACE_CHAR = {
+    "á": "a",
+    "é": "e",
+    "í": "i",
+    "ó": "o",
+    "ö": "o",
+    "ő": "o",
+    "ú": "u",
+    "ü": "u",
+    "ű": "u",
+}
+
+
+def abc_list_first_is_smaller(list_1, list_2):  # == (list_1 <= list_2)
+    l = min(len(list_1), len(list_2))
+    for i in range(l):
+        if list_1[i] > list_2[i]:
+            return False
+    # this rewards shorter lists
+    return True
+
+
+def abc_order(df):
+    pass
+    #
+    #           OH MAN, THIS NEEDS A QUICKSORT OF SOME KIND!!!
+    #                                `````````
+
 
 def tokenize_1(string):
     tokens = set(string.lower().split(" "))
     tokens = [re.sub(r"[^a-zA-Z0-9]", "", token) for token in tokens]
     tokens = [token for token in tokens if token != ""]
     return tokens
+
+
+def tokenize_2(streeng):
+    #
+    #               ROOM FOR SERIOUS IMPROVEMENT VIA regex-es!!!!
+    #                        ```````
+    string = streeng.lower()
+    for char in SEP_CHAR:
+        string = string.replace(char, " ")
+    for char in IGNORE_CHAR:
+        string = string.replace(char, "")
+    for char in REPLACE_CHAR:
+        string = string.replace(char, REPLACE_CHAR[char])
+    tokens = set(string.split(" "))
+    tokens = [token for token in tokens if token != ""]
+    return tokens
+
+
+def tokenize_neighbor(streeng):
+    string = streeng.lower()
+    for char in SEP_CHAR:
+        string = string.replace(char, " ")
+    for char in IGNORE_CHAR:
+        string = string.replace(char, "")
+    for char in REPLACE_CHAR:
+        string = string.replace(char, REPLACE_CHAR[char])
+    tokens = string.split(" ")
+    neigh_tokens = [tokens[i] + tokens[i + 1] for i in range(len(tokens) - 1)]
+    return neigh_tokens
 
 
 def melamed_distance_np(in_s1, in_s2, ins_cost=1, del_cost=1, sub_cost=1):
@@ -53,71 +126,50 @@ def jaccard_similarity(in_str1, in_str2):
 
 
 def combined_similarity(in_str1, in_str2):
-    return jaccard_similarity(in_str1, in_str2) * melamed_distance_np(in_str1, in_str2)
-
-
-def sort_by_lev(search_value, list_of_strings):
-    sorted = pd.DataFrame(columns=["string", "distance"])
-    for string in list_of_strings:
-        sorted = sorted.append(
-            {"string": string, "distance": melamed_distance_np(search_value, string)},
-            ignore_index=True,
-        )
-
-    return sorted.sort_values(by=["distance"])
-
-
-def sort_by_jac(search_value, list_of_strings):
-    sorted = pd.DataFrame(columns=["string", "distance"])
-    for string in list_of_strings:
-        sorted = sorted.append(
-            {"string": string, "distance": jaccard_similarity(search_value, string)},
-            ignore_index=True,
-        )
-
-    return sorted.sort_values(by=["distance"])
-
-
-def sort_lev_jac(search_value, list_of_strings):
-    sorted = pd.DataFrame(columns=["string", "lev", "jac", "comb"])
-    for string in list_of_strings:
-        mel = melamed_distance_np(search_value, string)
-        jac = jaccard_similarity(search_value, string)
-        comb = mel * jac
-        sorted = sorted.append(
-            {"string": string, "lev": mel, "jac": jac, "comb": comb}, ignore_index=True
-        )
-
-    return sorted.sort_values(by=["comb"])
+    j = jaccard_similarity(in_str1, in_str2)
+    m = melamed_distance_np(in_str1, in_str2)
+    return j * m
 
 
 def sort_token(search_value, list_of_strings, cutoff=None, method=1):
-    sorted = pd.DataFrame(columns=["string", "lev", "jac", "comb", "token"])
+    sorted = pd.DataFrame(columns=["string", "token"])
     if method == 1:
         for string in list_of_strings:
-            mel = melamed_distance_np(search_value, string)
-            jac = jaccard_similarity(search_value, string)
-            comb = mel * jac
             token_d = token_distance(search_value, string)
             sorted = sorted.append(
                 {
                     "string": string,
-                    "lev": mel,
-                    "jac": jac,
-                    "comb": comb,
+                    "token": token_d,
+                },
+                ignore_index=True,
+            )
+    elif method == 2:
+        for string in list_of_strings:
+            token_d = token_distance_two(search_value, string)
+            sorted = sorted.append(
+                {
+                    "string": string,
                     "token": token_d,
                 },
                 ignore_index=True,
             )
     else:
         for string in list_of_strings:
-            token_d = token_distance_two(search_value, string)
+            token_d = token_distance_three(search_value, string)
             sorted = sorted.append(
-                {"string": string, "token": token_d},
+                {
+                    "string": string,
+                    "token": token_d,
+                },
                 ignore_index=True,
             )
-
     if cutoff is not None:
+        df = sorted.sort_values(by=["token"]).head(cutoff)
+        for line in df["string"]:
+            print(tokenize_1(line))
+            print(tokenize_2(line))
+            print(tokenize_neighbor(line))
+            print()
         return sorted.sort_values(by=["token"]).head(cutoff)
     return sorted.sort_values(by=["token"])
 
@@ -128,36 +180,47 @@ def token_distance(search_value, text, cutoff=5):
     a list of sorted match values.
     """
     search_tokens, text_tokens = tokenize_1(search_value), tokenize_1(text)
-    s_length, t_length = len(search_tokens), len(text_tokens)
     distance_list = []
-    #
     for token1 in search_tokens:
         for token2 in text_tokens:
             distance_list.append(melamed_distance_np(token1, token2))
     distance_list.sort()
     distance_list = [d / 2**i for i, d in enumerate(distance_list)]
     n = len(distance_list)
-    rec_norm = -2 * (0.5 ** (n + 1) - 1)
-    # distance_list = np.prod(distance_list[:10])
-    # print(distance_list)
+    rec_norm = -2 * (0.5**n - 1)
     return np.sum(distance_list) / rec_norm
-    # return np.prod(distance_list[:10])
 
 
 def token_distance_two(search_value, text, cutoff=5):
     """ """
-    search_tokens, text_tokens = tokenize_1(search_value), tokenize_1(text)
-    s_length, t_length = len(search_tokens), len(text_tokens)
-    norm = len(search_tokens) / len(text_tokens)
+    search_tokens, text_tokens = tokenize_2(search_value), tokenize_2(text)
     distance_list = []
-    # print(text_tokens, search_tokens)
     for token1 in search_tokens:
         for token2 in text_tokens:
             distance_list.append(melamed_distance_np(token1, token2))
     distance_list.sort()
-    # distance_list = [d/2**(i+1) for i, d in enumerate(distance_list)]
-    # print(distance_list)
-    return norm * np.sum(distance_list)
+    distance_list = [d / 2**i for i, d in enumerate(distance_list)]
+    n = len(distance_list)
+    rec_norm = -2 * (0.5**n - 1)
+    return np.sum(distance_list) / rec_norm
+
+
+def token_distance_three(search_value, text, cutoff=5):
+    """ """
+    search_tokens = tokenize_2(search_value) + tokenize_neighbor(search_value)
+    text_tokens = tokenize_2(text) + tokenize_neighbor(text)
+
+    distance_list = []
+    very_close_match = []
+    for token1 in search_tokens:
+        for token2 in text_tokens:
+            distance_list.append(melamed_distance_np(token1, token2))
+    distance_list.sort()
+    distance_list = [d / 2**i for i, d in enumerate(distance_list)]
+    n = len(distance_list)
+    rec_norm = -2 * (0.5**n - 1)
+    print(rec_norm)
+    return np.sum(distance_list) / rec_norm
 
 
 def main():
@@ -176,6 +239,7 @@ def main():
     print_values = True
     print(sort_token(search_value, list_of_strings, cutoff=5, method=1))
     print(sort_token(search_value, list_of_strings, cutoff=5, method=2))
+    print(sort_token(search_value, list_of_strings, cutoff=5, method=3))
     # print(token_distance(search_value, maszlag))
 
 

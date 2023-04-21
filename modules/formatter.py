@@ -1,10 +1,4 @@
-import pathlib
-
-
-cd = pathlib.Path().resolve()
-abc = cd / "modules/abc.txt"
-if __name__ == "__main__":
-    abc = "abc.txt"
+abc = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\modules\abc.txt"
 
 
 def line_breaker(text, position):
