@@ -20,7 +20,7 @@ Thumbnail: http://i.ytimg.com/vi/R-ZplG81oZg/default.jpg
 
 
 _DELIM = " -- "
-music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
+music_lib = r"music_lib.txt"
 
 
 def inwriter(title_in, url, duration):

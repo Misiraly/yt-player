@@ -4,3 +4,7 @@ My first entry to the devlog.
 20230420
 I am not sure how to do this, I think I will try to be conservative with the
 messages and not delete them.
+-------------------------------------------------------------------------------
+20230422
+
+wow was it cumbersome to set up a local repo on my PC. This is new for me all.

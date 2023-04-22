@@ -1,4 +1,4 @@
-abc = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\modules\abc.txt"
+abc = r".\modules\abc.txt"
 
 
 def line_breaker(text, position):
