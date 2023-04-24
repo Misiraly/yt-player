@@ -2,10 +2,10 @@ import msvcrt
 import time
 from multiprocessing import Process, Value
 
-import pafy
+from yt_dlp import YoutubeDL
 import vlc
 
-import lib_sorter as lib
+import lib_sorter as lib_s
 from modules import formatter
 
 # from random import randint
@@ -123,7 +123,7 @@ def formatted_time(seconds, is_long=False):
     return f"{hour}:{minute}:{sec}"
 
 
-def player_info(title, duration, seconds, info_length=60):
+def player_info(title, seconds, info_length=60):
     print("-" * info_length)
     title_list = formatter.line_breaker(str(title), info_length - 2)
     left_marge = " " * 15
@@ -135,10 +135,10 @@ def player_info(title, duration, seconds, info_length=60):
     print()
 
 
-def player_loop(seconds, v: Value):
+def player_loop(v_duration, v: Value):
     start_time = time.time()
     key = v.value
-    Bar = ProgressBar(seconds, start_time)
+    Bar = ProgressBar(v_duration, start_time)
     while key != "q":
         if key == "p":
             Bar.pause_time = time.time()
@@ -168,22 +168,22 @@ def player_loop(seconds, v: Value):
     v.value = "q"
 
 
-def cli_gui():
-    seconds = get_seconds(video.duration)
-    player_info(video.title, video.duration, seconds)
+def cli_gui(v_title, v_duration):
+    # seconds = get_seconds(v_duration)
+    player_info(v_title, v_duration)
     key = "n"
     v = Value("u", key)
     p_count = Process(
         target=count,
         args=(
-            seconds,
+            v_duration,
             v,
         ),
     )
     p_ask = Process(target=ask, args=(v,))
     p_count.start()
     p_ask.start()
-    player_loop(seconds, v)
+    player_loop(v_duration, v)
     p_count.terminate()
     p_ask.kill()
     p_count.join()
@@ -225,7 +225,7 @@ def check_if_num(cmd_input, tab, prev_url):
 
 def start_input(prev_url):
     cont = True
-    tab = lib.pull_songs()
+    tab = lib_s.pull_songs()
     prompt = "[>] URL or song Number /quit - 'q'/ [>]: "
     while cont:
         cmd_input = exit_check(input(prompt))
@@ -241,12 +241,15 @@ if __name__ == "__main__":
     while True:
         url = start_input(prev_url)
         # print("\n" + url + "\n")
-        video = pafy.new(url)
-        best = video.getbestaudio()
-        media = vlc.MediaPlayer(best.url)
+        ydl_opts = {'format': 'bestaudio'}
+        with YoutubeDL(ydl_opts) as ydl:
+            song_info = ydl.extract_info(url, download=False)
+        v_title = song_info["title"]
+        v_duration = song_info["duration"]
+        media = vlc.MediaPlayer(song_info["url"])
         media.play()
-        cli_gui()
-        lib.inwriter(video.title, url, video.duration)
+        cli_gui(v_title, v_duration)
+        lib_s.inwriter(v_title, url, formatted_time(v_duration))
         print("\n***(bideo emth...! щ(`Д´щ;) )***")
         print("-" * 80 + "\n")
         prev_url = url
