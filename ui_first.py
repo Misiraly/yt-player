@@ -2,11 +2,11 @@ import msvcrt
 import time
 from multiprocessing import Process, Value
 
-from yt_dlp import YoutubeDL
 import vlc
 
 import lib_sorter as lib_s
 from modules import formatter
+from yt_dlp import YoutubeDL
 
 # from random import randint
 
@@ -241,7 +241,7 @@ if __name__ == "__main__":
     while True:
         url = start_input(prev_url)
         # print("\n" + url + "\n")
-        ydl_opts = {'format': 'bestaudio'}
+        ydl_opts = {"format": "bestaudio"}
         with YoutubeDL(ydl_opts) as ydl:
             song_info = ydl.extract_info(url, download=False)
         v_title = song_info["title"]
