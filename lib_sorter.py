@@ -1,5 +1,7 @@
 from datetime import datetime
 
+import pandas as pd
+
 from modules import formatter
 
 """
@@ -21,6 +23,26 @@ Thumbnail: http://i.ytimg.com/vi/R-ZplG81oZg/default.jpg
 
 _DELIM = " -- "
 music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
+
+
+def pull_as_df(columns=None):
+    df = pd.DataFrame(columns=["title", "url", "duration", "add_date"])
+    with open(music_lib) as r:
+        for line in r:
+            con = line.split(_DELIM)
+            for i in range(4 - len(con)):
+                con.append("")
+            b = {
+                "title": [con[0]],
+                "url": [con[1]],
+                "duration": [con[2]],
+                "add_date": [con[3]],
+            }
+            tf = pd.DataFrame(b)
+            df = pd.concat([df, tf], ignore_index=True)
+    if columns is not None:
+        return df[columns]
+    return df
 
 
 def inwriter(title_in, url, duration):

@@ -8,3 +8,8 @@ messages and not delete them.
 20230422
 
 wow was it cumbersome to set up a local repo on my PC. This is new for me all.
+-------------------------------------------------------------------------------
+20230424
+Finally I was able to get rid of yt-dl. It was failing unexpectedly, I had to
+update then downgrade it manually for it to work, and it is not maintained at
+all now... so good!

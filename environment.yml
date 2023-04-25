@@ -17,5 +17,11 @@ dependencies:
 - python=3.9
 - yt-dlp
 - pip
+# developer dependencies
+- black
+- isort
+- flake8
+- pandas
+# pip dependencies
 - pip:
     - python-vlc

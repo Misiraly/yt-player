@@ -3,10 +3,10 @@ import time
 from multiprocessing import Process, Value
 
 import vlc
+from yt_dlp import YoutubeDL
 
 import lib_sorter as lib_s
 from modules import formatter
-from yt_dlp import YoutubeDL
 
 # from random import randint
 
