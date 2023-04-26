@@ -13,3 +13,8 @@ wow was it cumbersome to set up a local repo on my PC. This is new for me all.
 Finally I was able to get rid of yt-dl. It was failing unexpectedly, I had to
 update then downgrade it manually for it to work, and it is not maintained at
 all now... so good!
+-------------------------------------------------------------------------------
+20230426
+
+I was able to update the search functionality, now I am able to compare lists
+in an 'abc' manner... it was one hell of a deal with those pesky dataframes!

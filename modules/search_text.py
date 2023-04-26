@@ -33,13 +33,14 @@ REPLACE_CHAR = {
 
 def qs_part(df, column, leq):
     l, r = [], []
-    pivot = df.head(1)
-    print(pivot)
-    l = df.loc[leq(df[column], pivot(column))]
-    print(l)
-    # l = pd.concat(l).tail(-1)
-    r = df.loc[[not leq(elmnt, pivot[column]) for elmnt in df[column]]]
-    # r = pd.concat(r)
+    pivot = df.tail(1)
+    l = [df.iloc[[i]] for i in list(df.index.values) if leq(df.iloc[i][column],pivot[column].iloc[0])]
+    l = pd.concat(l,ignore_index=True).head(-1)
+    r = [df.iloc[[i]] for i in list(df.index.values) if not leq(df.iloc[i][column],pivot[column].iloc[0])]
+    if len(r) > 0: 
+        r = pd.concat(r, ignore_index=True)
+    else:
+        r = pd.DataFrame(dtype=int).reindex(columns=df.columns)
     return l, pivot, r
 
 
@@ -49,14 +50,18 @@ def quick_sort(df, column, leq):
     l, pivot, r = qs_part(df, column, leq)
     l = quick_sort(l, column, leq)
     r = quick_sort(r, column, leq)
-    return pd.concat([l, pivot, r])
+    return pd.concat([l, pivot, r], ignore_index=True)
 
 
 def abc_leq(list_1, list_2):  # == (list_1 <= list_2)
     l = min(len(list_1), len(list_2))
     for i in range(l):
-        if list_1[i] > list_2[i]:
+        if list_1[i] == list_2[i]:
+            continue
+        elif list_1[i] > list_2[i]:
             return False
+        else:
+            return True
     # this rewards shorter lists
     return True
 
@@ -200,3 +205,22 @@ def token_distance_three(search_value, text, cutoff=5):
     n = len(distance_list)
     rec_norm = 2 - (1 / 2 ** (n - 1))
     return np.sum(distance_list) / rec_norm
+    
+
+def token_distance_list(search_value, text, cutoff=5):
+    """
+    Calculate the melamed distance between all the possible pairs of words,
+    and all the possible concatenations of neighboring words. Order the
+    distances and sum them with ever decreasing weight, and normalize for
+    the weight.
+    """
+    search_tokens = tokenize_2(search_value) + tokenize_neighbor(search_value)
+    text_tokens = tokenize_2(text) + tokenize_neighbor(text)
+
+    distance_list = []
+    very_close_match = []
+    for token1 in search_tokens:
+        for token2 in text_tokens:
+            distance_list.append(melamed_distance_np(token1, token2))
+    distance_list.sort()
+    return distance_list

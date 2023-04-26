@@ -22,6 +22,7 @@ dependencies:
 - isort
 - flake8
 - pandas
+- regex
 # pip dependencies
 - pip:
     - python-vlc
