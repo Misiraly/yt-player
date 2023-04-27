@@ -34,10 +34,18 @@ REPLACE_CHAR = {
 def qs_part(df, column, leq):
     l, r = [], []
     pivot = df.tail(1)
-    l = [df.iloc[[i]] for i in list(df.index.values) if leq(df.iloc[i][column],pivot[column].iloc[0])]
-    l = pd.concat(l,ignore_index=True).head(-1)
-    r = [df.iloc[[i]] for i in list(df.index.values) if not leq(df.iloc[i][column],pivot[column].iloc[0])]
-    if len(r) > 0: 
+    l = [
+        df.iloc[[i]]
+        for i in list(df.index.values)
+        if leq(df.iloc[i][column], pivot[column].iloc[0])
+    ]
+    l = pd.concat(l, ignore_index=True).head(-1)
+    r = [
+        df.iloc[[i]]
+        for i in list(df.index.values)
+        if not leq(df.iloc[i][column], pivot[column].iloc[0])
+    ]
+    if len(r) > 0:
         r = pd.concat(r, ignore_index=True)
     else:
         r = pd.DataFrame(dtype=int).reindex(columns=df.columns)
@@ -66,8 +74,13 @@ def abc_leq(list_1, list_2):  # == (list_1 <= list_2)
     return True
 
 
-def abc_order(array):
-    return quick_sort(array, abc_leq)
+def abc_order(search_word, df, column="title", cutoff=5):
+    df["dis"] = df.apply(
+        lambda row: token_distance_list(search_word, row[column]), axis=1
+    )
+    if cutoff is None:
+        return quick_sort(df, column, abc_leq)
+    return quick_sort(df, column, abc_leq).head(cutoff)
 
 
 def tokenize_1(string):
@@ -102,6 +115,7 @@ def tokenize_neighbor(streeng):
     for char in REPLACE_CHAR:
         string = string.replace(char, REPLACE_CHAR[char])
     tokens = string.split(" ")
+    tokens = [token for token in tokens if token != ""]
     neigh_tokens = [tokens[i] + tokens[i + 1] for i in range(len(tokens) - 1)]
     return neigh_tokens
 
@@ -205,7 +219,7 @@ def token_distance_three(search_value, text, cutoff=5):
     n = len(distance_list)
     rec_norm = 2 - (1 / 2 ** (n - 1))
     return np.sum(distance_list) / rec_norm
-    
+
 
 def token_distance_list(search_value, text, cutoff=5):
     """
@@ -216,7 +230,6 @@ def token_distance_list(search_value, text, cutoff=5):
     """
     search_tokens = tokenize_2(search_value) + tokenize_neighbor(search_value)
     text_tokens = tokenize_2(text) + tokenize_neighbor(text)
-
     distance_list = []
     very_close_match = []
     for token1 in search_tokens:

@@ -14,16 +14,6 @@ from modules import formatter
 music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
 EXIT_CHARS = {"q", "exit"}
 
-"""
-Title: Eddy Grant - Gimme Hope Jo Anna  1988
-Author: OLD TAPES
-ID: R-ZplG81oZg
-Duration: 00:04:13
-Rating: None
-Views: 9150147
-Thumbnail: http://i.ytimg.com/vi/R-ZplG81oZg/default.jpg
-"""
-
 STATUS_ICON = {
     "p": "(||)",
     "s": "(■) ",
@@ -42,7 +32,6 @@ def count(seconds, v: Value):
         i -= 1
     key = "q"
     v.value = key
-    # print("count key: " + key)
 
 
 def ask(v: Value):
@@ -54,7 +43,6 @@ def ask(v: Value):
             key = msvcrt.getch().decode("ASCII").lower()
             v.value = key
         time.sleep(0.05)
-        # print("ask key: " + key)
 
 
 class ProgressBar:
@@ -169,7 +157,6 @@ def player_loop(v_duration, v: Value):
 
 
 def cli_gui(v_title, v_duration):
-    # seconds = get_seconds(v_duration)
     player_info(v_title, v_duration)
     key = "n"
     v = Value("u", key)
@@ -188,8 +175,6 @@ def cli_gui(v_title, v_duration):
     p_ask.kill()
     p_count.join()
     p_ask.join()
-    # print("\n@@@ count >>> : " + str(p_count.is_alive()))
-    # print("\n@@@ ask >>> : " + str(p_ask.is_alive()))
     media.stop()
     print()
 
@@ -233,7 +218,26 @@ def start_input(prev_url):
     return url
 
 
-if __name__ == "__main__":
+def main_ui():
+    print("\n")
+    formatter.abc_rower("PYTHON MUSIC")
+    print("\n")
+    url = start_input(prev_url)
+    ydl_opts = {"format": "bestaudio"}
+    with YoutubeDL(ydl_opts) as ydl:
+        song_info = ydl.extract_info(url, download=False)
+    v_title = song_info["title"]
+    v_duration = song_info["duration"]
+    media = vlc.MediaPlayer(song_info["url"])
+    media.play()
+    cli_gui(v_title, v_duration)
+    lib_s.inwriter(v_title, url, formatted_time(v_duration))
+    print("\n***(bideo emth...! щ(`Д´щ;) )***")
+    print("-" * 80 + "\n")
+    prev_url = url
+
+
+def main():
     print("\n")
     formatter.abc_rower("PYTHON MUSIC")
     print("\n")
@@ -253,3 +257,7 @@ if __name__ == "__main__":
         print("\n***(bideo emth...! щ(`Д´щ;) )***")
         print("-" * 80 + "\n")
         prev_url = url
+
+
+if __name__ == "__main__":
+    main()

@@ -18,3 +18,8 @@ all now... so good!
 
 I was able to update the search functionality, now I am able to compare lists
 in an 'abc' manner... it was one hell of a deal with those pesky dataframes!
+-------------------------------------------------------------------------------
+20230427
+
+Tinkered with the search functionality again, did some trials, fixed a bug that
+gave faulty searches. Tough stuff.
