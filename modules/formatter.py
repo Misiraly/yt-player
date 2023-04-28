@@ -61,7 +61,7 @@ def raw_abc_to_abc():
     return letters
 
 
-def abc_rower(text):
+def abc_rower(text, press=False):
     letters = raw_abc_to_abc()
     line0 = ""
     line1 = ""
@@ -70,6 +70,8 @@ def abc_rower(text):
         line0 += " " + letters[char][0]
         line1 += " " + letters[char][1]
         line2 += " " + letters[char][2]
-    print(line0)
-    print(line1)
-    print(line2)
+    if press:
+        print(line0)
+        print(line1)
+        print(line2)
+    return [line0, line1, line2]

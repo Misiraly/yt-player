@@ -23,3 +23,6 @@ in an 'abc' manner... it was one hell of a deal with those pesky dataframes!
 
 Tinkered with the search functionality again, did some trials, fixed a bug that
 gave faulty searches. Tough stuff.
+-------------------------------------------------------------------------------
+20230428
+getting lost. functional or object oriented? it is really not straightforward.

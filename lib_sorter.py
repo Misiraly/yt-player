@@ -71,10 +71,27 @@ def inwriter(title_in, url, duration):
 
 
 def pull_songs():
+    """
+    Reads in the music library and returns a list of indeces, titles,
+    duration-s, dates of added. Prints indeces and titles.
+    """
     tab = []
     with open(music_lib) as lib:
         for i, line in enumerate(lib):
             print(str(i) + " " + line.split(_DELIM)[0])
             if "https" in line:
                 tab.append(line.split(_DELIM))
+    return tab
+
+
+def pull_Music_tab():
+    """
+    Reads in the music library and returns a list of indeces, titles,
+    duration-s, dates of added. Doesn't print.
+    """
+    tab = []
+    with open(music_lib) as lib:
+        for i, line in enumerate(lib):
+            # if "https" in line:
+            tab.append(line.split(_DELIM))
     return tab

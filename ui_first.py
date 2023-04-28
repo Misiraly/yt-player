@@ -116,14 +116,14 @@ def player_info(title, seconds, info_length=60):
     title_list = formatter.line_breaker(str(title), info_length - 2)
     left_marge = " " * 15
     for line in title_list:
-        print(formatter.centered(line, info_length))
+        print(line.center(info_length))
     print()
     print()
     print(left_marge + "[||] - p  [►] - l  [■] - q   Replay - r")
     print()
 
 
-def player_loop(v_duration, v: Value):
+def player_loop(media, v_duration, v: Value):
     start_time = time.time()
     key = v.value
     Bar = ProgressBar(v_duration, start_time)
@@ -136,6 +136,9 @@ def player_loop(v_duration, v: Value):
             v.value = "n"
         elif key == "s":
             media.stop()
+            Bar.down = True
+            Bar.c_time = 0
+            Bar.start_time = time.time()
             v.value = "n"
         elif key == "l":
             if Bar.pause_time != 0:
@@ -156,7 +159,7 @@ def player_loop(v_duration, v: Value):
     v.value = "q"
 
 
-def cli_gui(v_title, v_duration):
+def cli_gui(v_title, v_duration, media):
     player_info(v_title, v_duration)
     key = "n"
     v = Value("u", key)
@@ -170,7 +173,7 @@ def cli_gui(v_title, v_duration):
     p_ask = Process(target=ask, args=(v,))
     p_count.start()
     p_ask.start()
-    player_loop(v_duration, v)
+    player_loop(media, v_duration, v)
     p_count.terminate()
     p_ask.kill()
     p_count.join()
@@ -208,9 +211,61 @@ def check_if_num(cmd_input, tab, prev_url):
     return cmd_input, cont
 
 
-def start_input(prev_url):
+class BaseInterface:
+    _page = {}
+    _page["header"] = ["\n"] + formatter.abc_rower("  PYTHON MUSIC") + ["\n"]
+    _page["body"] = ""
+    _page["prompt"] = ["[>] URL or song Number [>]: "]
+    _page["closer"] = [
+        "\n***     ..bideo.. emth!!!~` щ(`Д´щ;)    ***",
+        "\n" + "-" * 80 + "\n",
+    ]
+    _page_width = 80
+    _prev_url = "segg"  #  ????
+    _url = ""
+    ydl_opts = {"format": "bestaudio"}
+    song_info = None
+    tab_array = []
+    wspace = " "
+    ell = "..."
+    nell = "   "
+    media = None
+
+    def __init__(self):
+        self._tab = lib_s.pull_Music_tab()
+
+    def side_by_side(self):
+        half = len(self._tab) // 2 + len(self._tab) % 2
+        part_line = self._page_width // 2
+        title_l = part_line - len(self.wspace) - len(self.ell)
+        tst = ["" for i in range(half)]  # two-side-table :3
+        page = ""
+        for i, song in enumerate(self._tab):
+            title = song[0].ljust(title_l)
+            if len(title) > title_l:
+                title = title[: title_l - 3] + self.ell
+            tst[i % half] = (
+                tst[i % half]
+                + str(i).ljust(2)
+                + self.wspace
+                + title
+                + self.wspace * (1 - (i // half))
+            )
+        self._page["body"] = tst
+        for line in tst:
+            page = page + line + "\n"
+        return page
+
+    def show_article(self):
+        self.side_by_side()
+        _page = self._page
+        article = _page["header"] + _page["body"]  # + _page["prompt"] + _page["closer"]
+        for line in article:
+            print(line)
+
+
+def start_input(prev_url, tab):
     cont = True
-    tab = lib_s.pull_songs()
     prompt = "[>] URL or song Number /quit - 'q'/ [>]: "
     while cont:
         cmd_input = exit_check(input(prompt))
@@ -218,46 +273,35 @@ def start_input(prev_url):
     return url
 
 
-def main_ui():
-    print("\n")
-    formatter.abc_rower("PYTHON MUSIC")
-    print("\n")
-    url = start_input(prev_url)
+def playTheSong(url):
     ydl_opts = {"format": "bestaudio"}
     with YoutubeDL(ydl_opts) as ydl:
         song_info = ydl.extract_info(url, download=False)
-    v_title = song_info["title"]
-    v_duration = song_info["duration"]
     media = vlc.MediaPlayer(song_info["url"])
     media.play()
-    cli_gui(v_title, v_duration)
-    lib_s.inwriter(v_title, url, formatted_time(v_duration))
-    print("\n***(bideo emth...! щ(`Д´щ;) )***")
-    print("-" * 80 + "\n")
-    prev_url = url
+    return song_info, media
 
 
-def main():
-    print("\n")
-    formatter.abc_rower("PYTHON MUSIC")
-    print("\n")
+def init_player_ui(song_info, media):
+    v_title = song_info["title"]
+    v_duration = song_info["duration"]
+
+    cli_gui(v_title, v_duration, media)
+    lib_s.inwriter(v_title, song_info["url"], formatted_time(v_duration))
+
+
+def main_loop():
     prev_url = "segg"
+    bu = BaseInterface()
     while True:
-        url = start_input(prev_url)
-        # print("\n" + url + "\n")
-        ydl_opts = {"format": "bestaudio"}
-        with YoutubeDL(ydl_opts) as ydl:
-            song_info = ydl.extract_info(url, download=False)
-        v_title = song_info["title"]
-        v_duration = song_info["duration"]
-        media = vlc.MediaPlayer(song_info["url"])
-        media.play()
-        cli_gui(v_title, v_duration)
-        lib_s.inwriter(v_title, url, formatted_time(v_duration))
-        print("\n***(bideo emth...! щ(`Д´щ;) )***")
-        print("-" * 80 + "\n")
+        bu.show_article()
+        url = start_input(prev_url, bu._tab)
+        song_info, media = playTheSong(url)
+        init_player_ui(song_info, media)
         prev_url = url
+        for entry in bu._page["closer"]:
+            print(entry)
 
 
 if __name__ == "__main__":
-    main()
+    main_loop()
