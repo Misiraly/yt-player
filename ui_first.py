@@ -28,8 +28,9 @@ STATUS_CHAR = {"p", "s", "l", "r", "q", "n"}
 def count(seconds, v: Value):
     i = seconds
     while v.value != "q" and i > 0:
-        time.sleep(1)
-        i -= 1
+        time.sleep(0.125)
+        if v.value != "b":
+            i -= 0.125
     key = "q"
     v.value = key
 
@@ -37,8 +38,8 @@ def count(seconds, v: Value):
 def ask(v: Value):
     key = v.value
     while key != "q":
-        # if we don't check for this, then the Process actually DOESN'T STOP or
-        # FUCKS UP or smth even after TERMINATING IT. Cuh
+        # if we don't check for this below, then the Process actually DOESN'T
+        # STOP or FUCKS UP or smth even after TERMINATING IT. Cuh
         if msvcrt.kbhit():
             key = msvcrt.getch().decode("ASCII").lower()
             v.value = key
@@ -82,7 +83,7 @@ class ProgressBar:
             ratio = 1
         bar = "=" * (round((self.bar_l - 1) * ratio)) + "v"
         neg_bar = "-" * (self.bar_l - len(bar))
-        if key in STATUS_CHAR and key != "n":
+        if key in STATUS_CHAR and key not in {"n", "np"}:
             self.key = key
         self.time_bar = formatted_time(self.c_time)
         progress = STATUS_ICON[self.key] + " " + self.time_bar + bar + neg_bar
@@ -133,7 +134,7 @@ def player_loop(media, v_duration, v: Value):
             Bar.down_time = time.time() - Bar.pause_time
             media.pause()
             Bar.pause()
-            v.value = "n"
+            v.value = "b"
         elif key == "s":
             media.stop()
             Bar.down = True
