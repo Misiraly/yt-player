@@ -12,6 +12,7 @@ from modules import formatter
 
 
 music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
+#!
 EXIT_CHARS = {"q", "exit"}
 
 STATUS_ICON = {
@@ -258,6 +259,7 @@ class BaseInterface:
         return page
 
     def show_article(self):
+        self._tab = lib_s.pull_Music_tab()
         self.side_by_side()
         _page = self._page
         article = _page["header"] + _page["body"]  # + _page["prompt"] + _page["closer"]

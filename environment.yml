@@ -23,6 +23,7 @@ dependencies:
 - flake8
 - pandas
 - regex
+- unidecode
 # pip dependencies
 - pip:
     - python-vlc

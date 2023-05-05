@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import pandas as pd
+import regex as re
 
 from modules import formatter
 
@@ -54,6 +55,7 @@ def inwriter(title_in, url, duration):
             content = lib.read()
         content = content.split("\n")[:-1]  # to remove last newline char
         line_to_add = _DELIM.join([title, url, duration, str(datetime.now())])
+        print(url)
         content.append(line_to_add)
         content.sort()
         with open(music_lib, "w") as lib:
@@ -64,6 +66,11 @@ def inwriter(title_in, url, duration):
                 except:
                     print("*" * 80)
                     print(" ")
+                    title = re.sub(r"[^a-zA-Z0-9 ]", "", title)
+                    line_to_add = _DELIM.join(
+                        [title, url, duration, str(datetime.now())]
+                    )
+                    lib.write(line_to_add + "\n")
                     formatter.abc_rower("   ! WARNING !")
                     print(" ")
                     print("\n\nWasn't able to add\n" + ">> " + con + " <<")
