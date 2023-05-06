@@ -17,6 +17,7 @@ dependencies:
 - python=3.9
 - yt-dlp
 - pip
+- python-levenshtein
 # developer dependencies
 - black
 - isort

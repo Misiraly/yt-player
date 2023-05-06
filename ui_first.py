@@ -285,12 +285,14 @@ def playTheSong(url):
     return song_info, media
 
 
-def init_player_ui(song_info, media):
+def init_player_ui(url, song_info, media):
     v_title = song_info["title"]
     v_duration = song_info["duration"]
 
     cli_gui(v_title, v_duration, media)
-    lib_s.inwriter(v_title, song_info["url"], formatted_time(v_duration))
+    lib_s.inwriter(
+        v_title, url, formatted_time(v_duration)
+    )  # use the original url, otherwise it writes in a sheit url
 
 
 def main_loop():
@@ -300,7 +302,7 @@ def main_loop():
         bu.show_article()
         url = start_input(prev_url, bu._tab)
         song_info, media = playTheSong(url)
-        init_player_ui(song_info, media)
+        init_player_ui(url, song_info, media)
         prev_url = url
         for entry in bu._page["closer"]:
             print(entry)

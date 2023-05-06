@@ -75,3 +75,8 @@ def abc_rower(text, press=False):
         print(line1)
         print(line2)
     return [line0, line1, line2]
+
+
+def print_rows(three_rows):
+    for row in three_rows:
+        print(row)
