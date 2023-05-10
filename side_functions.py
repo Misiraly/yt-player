@@ -9,21 +9,35 @@ TREE = {
     "single": "play a video but don't add to library",
 }
 
+EXIT_CHARS = {"q", "exit"}
+
 
 def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5) -> pd.DataFrame:
     df = lib
     df["dis"] = lib.apply(
         lambda row: st.token_distance_list(s_word, row["title"]), axis=1
     )
-    sdf = st.qs_df(df, "dis", st.abc_leq)
-    print(sdf)
+    if cutoff > len(df.index):
+        print(
+            f"[WARNING] Cutoff value ({cutoff}) larger than library length, defaulting to 5"
+        )
+        cutoff = 5
+    sdf = st.qs_df(df, "dis", st.abc_leq, cutoff=cutoff)
     return sdf
+
+
+def find_options(cmd_input):
+    op_STR = " --"
+    if op_STR in cmd_input:
+        return tuple(cmd_input.split(op_STR))
+    return cmd_input, 5
 
 
 def ser_lib():
     lib = ls.pull_as_df()
-    s_word = input("Search: ")
-    s_lib = sorted_by_word(s_word, lib, 6)
+    cmd_input = input("Search [optional: --cutoff=int]: ")
+    s_word, cutoff = find_options(cmd_input)
+    s_lib = sorted_by_word(s_word, lib, int(cutoff))
     print(s_lib[["title"]])
 
 
@@ -31,7 +45,6 @@ def exit_check(cmd_input):
     if cmd_input.lower() in EXIT_CHARS:
         print()
         exit()
-    return cmd_input
 
 
 def check_if_num(cmd_input, tab, prev_url):
@@ -56,10 +69,10 @@ def check_if_num(cmd_input, tab, prev_url):
     return cmd_input, cont
 
 
-def start_input(prev_url, tab):
+def start_input(prev_url, tab, cmd_input):
     cont = True
-    prompt = "[>] URL or song Number /quit - 'q'/ [>]: "
+    url = prev_url
     while cont:
-        cmd_input = exit_check(input(prompt))
+        exit_check(cmd_input)
         url, cont = check_if_num(cmd_input, tab, prev_url)
     return url

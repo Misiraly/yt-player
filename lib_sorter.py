@@ -23,7 +23,7 @@ Thumbnail: http://i.ytimg.com/vi/R-ZplG81oZg/default.jpg
 
 
 _DELIM = " -- "
-music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\dummy_music_lib.txt"
+music_lib = r"data\music_lib.txt"
 
 
 def pull_as_df(columns=None):
@@ -91,9 +91,9 @@ def pull_songs():
     return tab
 
 
-def pull_Music_tab():
+def pull_music_tab():
     """
-    Reads in the music library and returns a list of indeces, titles,
+    Reads in the music library and returns a list of indices, titles,
     duration-s, dates of added. Doesn't print.
     """
     tab = []

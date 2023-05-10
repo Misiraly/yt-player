@@ -2,9 +2,6 @@ import msvcrt
 import time
 from multiprocessing import Process, Value
 
-import vlc
-from yt_dlp import YoutubeDL
-
 import lib_sorter as lib_s
 from modules import formatter
 
@@ -177,54 +174,25 @@ def cli_gui(v_title, v_duration, media):
     p_ask.start()
     player_loop(media, v_duration, v)
     p_count.terminate()
-    p_ask.kill()
+    p_ask.terminate()
     p_count.join()
     p_ask.join()
     media.stop()
     print()
 
 
-def exit_check(cmd_input):
-    if cmd_input.lower() in EXIT_CHARS:
-        print()
-        exit()
-    return cmd_input
-
-
-def check_if_num(cmd_input, tab, prev_url):
-    cont = False
-    if cmd_input.isnumeric():
-        cmd_num = int(cmd_input)
-        if cmd_num not in range(len(tab)):
-            cont = True
-            print("Try again retard, number not on list")
-            return "", cont
-        else:
-            return tab[cmd_num][1], cont
-    elif cmd_input.lower() == "random":
-        print("\n[RETARD WARNING] I disabled it, retard.\n")
-        return "", True
-        # return tab[randint(0,len(tab))][1], cont
-    elif cmd_input.lower() == "r":
-        return prev_url, cont
-    elif "https" not in cmd_input:
-        print("url not good, you got a free song!")
-        return "https://www.youtube.com/watch?v=R-ZplG81oZg", cont
-    return cmd_input, cont
-
-
 class BaseInterface:
-    _page = {}
-    _page["header"] = ["\n"] + formatter.abc_rower("  PYTHON MUSIC") + ["\n"]
-    _page["body"] = ""
-    _page["prompt"] = ["[>] URL or song Number [>]: "]
-    _page["closer"] = [
+    page = dict()
+    page["header"] = ["\n"] + formatter.abc_rower("  PYTHON MUSIC") + ["\n"]
+    page["body"] = ""
+    page["prompt"] = ["[>] URL or song Number [>]: "]
+    page["closer"] = [
         "\n***     ..bideo.. emth!!!~` щ(`Д´щ;)    ***",
         "\n" + "-" * 80 + "\n",
     ]
     _page_width = 80
-    _prev_url = "segg"  #  ????
-    _url = ""
+    prev_url = "segg"  # ????
+    url = ""
     ydl_opts = {"format": "bestaudio"}
     song_info = None
     tab_array = []
@@ -234,15 +202,19 @@ class BaseInterface:
     media = None
 
     def __init__(self):
-        self._tab = lib_s.pull_Music_tab()
+        self.tab = lib_s.pull_music_tab()
+
+    def print_closer(self):
+        for entry in self.page["closer"]:
+            print(entry)
 
     def side_by_side(self):
-        half = len(self._tab) // 2 + len(self._tab) % 2
+        half = len(self.tab) // 2 + len(self.tab) % 2
         part_line = self._page_width // 2
         title_l = part_line - len(self.wspace) - len(self.ell)
         tst = ["" for i in range(half)]  # two-side-table :3
         page = ""
-        for i, song in enumerate(self._tab):
+        for i, song in enumerate(self.tab):
             title = song[0].ljust(title_l)
             if len(title) > title_l:
                 title = title[: title_l - 3] + self.ell
@@ -253,60 +225,15 @@ class BaseInterface:
                 + title
                 + self.wspace * (1 - (i // half))
             )
-        self._page["body"] = tst
+        self.page["body"] = tst
         for line in tst:
             page = page + line + "\n"
         return page
 
     def show_article(self):
-        self._tab = lib_s.pull_Music_tab()
+        self.tab = lib_s.pull_music_tab()
         self.side_by_side()
-        _page = self._page
+        _page = self.page
         article = _page["header"] + _page["body"]  # + _page["prompt"] + _page["closer"]
         for line in article:
             print(line)
-
-
-def start_input(prev_url, tab):
-    cont = True
-    prompt = "[>] URL or song Number /quit - 'q'/ [>]: "
-    while cont:
-        cmd_input = exit_check(input(prompt))
-        url, cont = check_if_num(cmd_input, tab, prev_url)
-    return url
-
-
-def playTheSong(url):
-    ydl_opts = {"format": "bestaudio"}
-    with YoutubeDL(ydl_opts) as ydl:
-        song_info = ydl.extract_info(url, download=False)
-    media = vlc.MediaPlayer(song_info["url"])
-    media.play()
-    return song_info, media
-
-
-def init_player_ui(url, song_info, media):
-    v_title = song_info["title"]
-    v_duration = song_info["duration"]
-
-    cli_gui(v_title, v_duration, media)
-    lib_s.inwriter(
-        v_title, url, formatted_time(v_duration)
-    )  # use the original url, otherwise it writes in a sheit url
-
-
-def main_loop():
-    prev_url = "segg"
-    bu = BaseInterface()
-    while True:
-        bu.show_article()
-        url = start_input(prev_url, bu._tab)
-        song_info, media = playTheSong(url)
-        init_player_ui(url, song_info, media)
-        prev_url = url
-        for entry in bu._page["closer"]:
-            print(entry)
-
-
-if __name__ == "__main__":
-    main_loop()
