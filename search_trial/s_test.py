@@ -67,6 +67,12 @@ def dis_test_2(sw, df):
     return sdf
 
 
+def dis_test_3(sw, df):
+    df["dis"] = df.apply(lambda row: st.token_distance_list_3(sw, row["title"]), axis=1)
+    sdf = st.qs_df(df, "dis", st.abc_leq)
+    return sdf
+
+
 def sorted_by_word(sw):
     df = pull_as_df()
     df["dis"] = df.apply(lambda row: st.token_distance_list(sw, row["title"]), axis=1)
@@ -89,19 +95,28 @@ def main():
         for line in r:
             sws.append(line.replace("\n", ""))
             # print(line)
-    funcs = {dis_test, dis_test_2}  # , sorted_by_word}
+    funcs = {dis_test, dis_test_2, dis_test_3}  # , sorted_by_word}
     dlist = {}
     df = pull_as_df()
     for func in funcs:
         dlist[func.__name__] = []
-    for i, sw in enumerate(sws):
-        # print(sw.upper())
-        for func in funcs:
+    print("Initializing testing... please be patient...")
+    for func in funcs:
+        temp = []
+        print()
+        print(func.__name__)
+        for i, sw in enumerate(sws):
+            # print(sw.upper())
             delta = time_wrap(func, sw, df)
             # print(">> " + func.__name__ + "("+sw+"): "+str(delta))
-            dlist[func.__name__].append(delta)
-        print("." * ((i // 24) % 120), end="\r")
-        # print("."*80)
+            temp.append(delta)
+            print(
+                str((100 * i) // (len(sws) - 1)).rjust(3)
+                + "%"
+                + "." * ((i // 24) % 120),
+                end="\r",
+            )
+        dlist[func.__name__] = temp
     print()
     for key in dlist:
         print(key.ljust(10) + " " + str(sum(dlist[key]) / len(dlist[key])))
