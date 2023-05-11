@@ -26,6 +26,10 @@ _DELIM = " -- "
 music_lib = r"data\music_lib.txt"
 
 
+def divider():
+    print("-" * 80)
+
+
 def pull_as_df(columns=None):
     df = pd.DataFrame(columns=["title", "url", "duration", "add_date"])
     with open(music_lib) as r:
@@ -46,16 +50,18 @@ def pull_as_df(columns=None):
     return df
 
 
+def correct_title(title_in):
+    title = re.sub(r"[^a-zA-Z0-9 ]", "", title_in)
+    return title
+
+
 def inwriter(title_in, url, duration):
     title = title_in.encode("utf-8", errors="ignore").decode("utf-8")
     with open(music_lib, "r") as lib:
         text = lib.read()
     if title not in text:
-        with open(music_lib, "r") as lib:
-            content = lib.read()
-        content = content.split("\n")[:-1]  # to remove last newline char
+        content = text.split("\n")[:-1]  # to remove last newline char
         line_to_add = _DELIM.join([title, url, duration, str(datetime.now())])
-        print(url)
         content.append(line_to_add)
         content.sort()
         with open(music_lib, "w") as lib:
@@ -64,17 +70,14 @@ def inwriter(title_in, url, duration):
                     if not con == "":
                         lib.write(con + "\n")
                 except:
-                    print("*" * 80)
-                    print(" ")
-                    title = re.sub(r"[^a-zA-Z0-9 ]", "", title)
+                    divider()
+                    title = correct_title(title)
                     line_to_add = _DELIM.join(
                         [title, url, duration, str(datetime.now())]
                     )
                     lib.write(line_to_add + "\n")
-                    formatter.print_rows(formatter.abc_rower("   ! WARNING !"))
-                    print(" ")
-                    print("\n\nWasn't able to add\n" + ">> " + con + " <<")
-                    print("try adding it manually\n\n")
+                    input("[WARNING] title contained verboten characters. Still added.")
+                    divider()
 
 
 def pull_songs():
@@ -102,3 +105,17 @@ def pull_music_tab():
             # if "https" in line:
             tab.append(line.split(_DELIM))
     return tab
+
+
+def pull_as_lines():
+    with open(music_lib, "r") as lib:
+        lines = lib.readlines()
+    return lines
+
+
+def del_music_line(line_to_del):
+    lines = pull_as_lines()
+    with open(music_lib, "w") as lib:
+        for line in lines:
+            if line_to_del != line:
+                lib.write(line)

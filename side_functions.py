@@ -12,6 +12,27 @@ TREE = {
 EXIT_CHARS = {"q", "exit"}
 
 
+def del_a_song():
+    lines = ls.pull_as_lines()
+    cmd_input = input("Song to delete (via index): ")
+    if not cmd_input.isnumeric():
+        print(f"[ERROR] wrong index ({cmd_input}), use only integers.")
+        return
+    if not int(cmd_input) in range(len(lines)):
+        print(f"[ERROR] index ({cmd_input}) out of bounds.")
+        return
+    cmd_num = int(cmd_input)
+    title = lines[cmd_num].split(ls._DELIM)[0]
+    print("Are you sure to delete the song: ")
+    print(" > " + title)
+    make_sure = input("? [y/N]")
+    if make_sure not in {"y", "Y"}:
+        print("[INFO] deletion aborted")
+        return
+    ls.del_music_line(lines[cmd_num])
+    print(f"[INFO] deleted song: {title}")
+
+
 def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5) -> pd.DataFrame:
     df = lib
     df["dis"] = lib.apply(

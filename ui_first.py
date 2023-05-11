@@ -233,7 +233,8 @@ class BaseInterface:
     def show_article(self):
         self.tab = lib_s.pull_music_tab()
         self.side_by_side()
-        _page = self.page
-        article = _page["header"] + _page["body"]  # + _page["prompt"] + _page["closer"]
+        article = (
+            self.page["header"] + self.page["body"]
+        )  # + _page["prompt"] + _page["closer"]
         for line in article:
             print(line)

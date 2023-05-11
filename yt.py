@@ -21,6 +21,12 @@ def decision_tree(bu):
         divider()
         sf.ser_lib()
         divider()
+    elif cmd_input == "del":
+        divider()
+        sf.del_a_song()
+        divider()
+    elif cmd_input == "tab":
+        bu.show_article()
     else:
         init_player(bu, cmd_input)
         bu.show_article()
