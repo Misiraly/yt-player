@@ -2,7 +2,7 @@ import msvcrt
 import time
 from multiprocessing import Process, Value
 
-import lib_sorter as lib_s
+import lib_sorter as ls
 from modules import formatter
 
 # from random import randint
@@ -184,38 +184,40 @@ def cli_gui(v_title, v_duration, media):
 class BaseInterface:
     page = dict()
     page["header"] = ["\n"] + formatter.abc_rower("  PYTHON MUSIC") + ["\n"]
-    page["body"] = ""
+    page["body"] = list()
     page["prompt"] = ["[>] URL or song Number [>]: "]
     page["closer"] = [
         "\n***     ..bideo.. emth!!!~` щ(`Д´щ;)    ***",
         "\n" + "-" * 80 + "\n",
     ]
-    _page_width = 80
-    prev_url = "segg"  # ????
-    url = ""
+    page_width = 80
+    song = {
+        "title": "dummy",
+        "url": "https://www.youtube.com/watch?v=fWh6J5Tg274",
+    }
     ydl_opts = {"format": "bestaudio"}
     song_info = None
-    tab_array = []
+    tab_array = list()
     wspace = " "
     ell = "..."
     nell = "   "
     media = None
 
     def __init__(self):
-        self.tab = lib_s.pull_music_tab()
+        self.table = ls.pull_csv_as_df()
 
     def print_closer(self):
         for entry in self.page["closer"]:
             print(entry)
 
-    def side_by_side(self):
-        half = len(self.tab) // 2 + len(self.tab) % 2
-        part_line = self._page_width // 2
+    def double_table(self):
+        half = len(self.table.index) // 2 + len(self.table.index) % 2
+        part_line = self.page_width // 2
         title_l = part_line - len(self.wspace) - len(self.ell)
         tst = ["" for i in range(half)]  # two-side-table :3
-        page = ""
-        for i, song in enumerate(self.tab):
-            title = song[0].ljust(title_l)
+        titles = self.table["title"].values.tolist()
+        for i, song in enumerate(titles):
+            title = song.ljust(title_l)
             if len(title) > title_l:
                 title = title[: title_l - 3] + self.ell
             tst[i % half] = (
@@ -226,13 +228,10 @@ class BaseInterface:
                 + self.wspace * (1 - (i // half))
             )
         self.page["body"] = tst
-        for line in tst:
-            page = page + line + "\n"
-        return page
 
     def show_article(self):
-        self.tab = lib_s.pull_music_tab()
-        self.side_by_side()
+        self.table = ls.pull_csv_as_df()
+        self.double_table()
         article = (
             self.page["header"] + self.page["body"]
         )  # + _page["prompt"] + _page["closer"]

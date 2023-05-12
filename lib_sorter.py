@@ -24,10 +24,38 @@ Thumbnail: http://i.ytimg.com/vi/R-ZplG81oZg/default.jpg
 
 _DELIM = " -- "
 music_lib = r"data\music_lib.txt"
+music_table = "data/music_table.csv"
 
 
 def divider():
     print("-" * 80)
+
+
+def pull_csv_as_df():
+    df = pd.read_csv(music_table, index_col=[0])
+    return df
+
+
+def write_table_to_csv(title_in, url, duration):
+    df = pull_csv_as_df()
+    if title_in not in df["title"].values:
+        df.loc[len(df.index)] = [title_in, url, duration, str(datetime.now())]
+        out_df = df.sort_values(
+            by=["title"], key=lambda col: col.str.lower(), ignore_index=True
+        )
+        out_df.to_csv(music_table)
+
+
+def correct_title(title_in):
+    title = re.sub(r"[^a-zA-Z0-9 ]", "", title_in)
+    title = title.lstrip()
+    return title
+
+
+def del_from_csv(row_index):
+    df = pull_csv_as_df()
+    new_df = df.drop([row_index]).reset_index(drop=True)
+    new_df.to_csv(music_table)
 
 
 def pull_as_df(columns=None):
@@ -39,20 +67,15 @@ def pull_as_df(columns=None):
                 con.append("")
             b = {
                 "title": [con[0]],
-                "url": [con[1]],
-                "duration": [con[2]],
-                "add_date": [con[3]],
+                "url": [con[1].replace("\n", "")],
+                "duration": [con[2].replace("\n", "")],
+                "add_date": [con[3].replace("\n", "")],
             }
             tf = pd.DataFrame(b)
             df = pd.concat([df, tf], ignore_index=True)
     if columns is not None:
         return df[columns]
     return df
-
-
-def correct_title(title_in):
-    title = re.sub(r"[^a-zA-Z0-9 ]", "", title_in)
-    return title
 
 
 def inwriter(title_in, url, duration):
@@ -94,7 +117,7 @@ def pull_songs():
     return tab
 
 
-def pull_music_tab():
+def pull_music_tab_KILL():
     """
     Reads in the music library and returns a list of indices, titles,
     duration-s, dates of added. Doesn't print.
