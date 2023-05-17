@@ -36,7 +36,7 @@ def play_on_list(cmd_input, bu):
 
 def play_new(cmd_input, bu):
     if "https" not in cmd_input:
-        print("[TRY AGAIN], cant comprehend")
+        print("[TRY AGAIN], can't comprehend")
     else:
         url = cmd_input
         song_info, media = playTheSong(url)
@@ -75,7 +75,7 @@ def delete_song():
 def single_play(bu):
     cmd_input = input("[>] song URL [played only once]: ")
     if "https" not in cmd_input:
-        print("[TRY AGAIN], cant comprehend")
+        print("[TRY AGAIN], can't comprehend")
     else:
         url = cmd_input
         song_info, media = playTheSong(url)
