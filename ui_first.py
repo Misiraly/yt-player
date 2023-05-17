@@ -8,10 +8,6 @@ from modules import formatter
 # from random import randint
 
 
-music_lib = r"C:\Users\mihaly.kotiers\Desktop\trhow\yt-player\music_lib.txt"
-#!
-EXIT_CHARS = {"q", "exit"}
-
 STATUS_ICON = {
     "p": "(||)",
     "s": "(■) ",

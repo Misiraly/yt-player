@@ -3,12 +3,6 @@ import pandas as pd
 import lib_sorter as ls
 from modules import search_text as st
 
-TREE = {
-    "ser": "search for a text",
-    "edit": "edit the library",
-    "single": "play a video but don't add to library",
-}
-
 
 def del_a_song():
     df = ls.pull_csv_as_df()

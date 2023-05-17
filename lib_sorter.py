@@ -5,26 +5,10 @@ import regex as re
 
 from modules import formatter
 
-"""
-Created on Thur Nov 24 15:00:41 2022
-
-@author: MIHALY.KOTIERS
-"""
-
-"""
-Title: Eddy Grant - Gimme Hope Jo Anna  1988
-Author: OLD TAPES
-ID: R-ZplG81oZg
-Duration: 00:04:13
-Rating: None
-Views: 9150147
-Thumbnail: http://i.ytimg.com/vi/R-ZplG81oZg/default.jpg
-"""
-
-
 _DELIM = " -- "
-music_lib = r"data\music_lib.txt"
+# music_lib = r"data\music_lib.txt"
 music_table = "data/music_table.csv"
+# should have format as in "data/test-table.csv"
 
 
 def divider():

@@ -2,7 +2,8 @@ import numpy as np
 import pandas as pd
 import regex as re
 from Levenshtein import distance as lev
-from unidecode import unidecode
+
+# from unidecode import unidecode
 
 SEP_CHAR = {
     ";",
@@ -169,17 +170,17 @@ def tokenize_neighbor(streeng):
     return tokens + neigh_tokens
 
 
-def tokenize_neighbor_2(streeng):
-    string = unidecode(streeng).lower()
-    # string = streeng.lower()
-    # for char in REPLACE_CHAR:
-    # string = re.sub(char, REPLACE_CHAR[char], string)
-    string = re.sub(reSEP, " ", string)
-    string = re.sub(reIGNORE, "", string)
-    tokens = iter(string.split(" "))
-    tokens = [token for token in tokens if token != ""]
-    neigh_tokens = [tokens[i] + tokens[i + 1] for i in range(len(tokens) - 1)]
-    return tokens + neigh_tokens
+# def tokenize_neighbor_2(streeng):
+# string = unidecode(streeng).lower()
+# # string = streeng.lower()
+# # for char in REPLACE_CHAR:
+# # string = re.sub(char, REPLACE_CHAR[char], string)
+# string = re.sub(reSEP, " ", string)
+# string = re.sub(reIGNORE, "", string)
+# tokens = iter(string.split(" "))
+# tokens = [token for token in tokens if token != ""]
+# neigh_tokens = [tokens[i] + tokens[i + 1] for i in range(len(tokens) - 1)]
+# return tokens + neigh_tokens
 
 
 def melamed_distance_np(in_s1, in_s2, ins_cost=1, del_cost=1, sub_cost=1):
