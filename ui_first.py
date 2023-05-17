@@ -222,7 +222,7 @@ class BaseInterface:
                 title = title[: title_l - 3] + self.ell
             tst[i % half] = (
                 tst[i % half]
-                + str(i).ljust(2)
+                + str(i).ljust(3)
                 + self.wspace
                 + title
                 + self.wspace * (1 - (i // half))
@@ -237,3 +237,8 @@ class BaseInterface:
         )  # + _page["prompt"] + _page["closer"]
         for line in article:
             print(line)
+
+    def show_article_by_date(self):
+        df = self.table.sort_values(by="add_date", ascending=False)
+        new_article = df["title"].iloc[::-1]
+        print(new_article.to_string())

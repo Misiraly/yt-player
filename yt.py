@@ -7,8 +7,6 @@ import ui_first
 
 # from random import randint
 
-# OPTIONS = {"ser":sf.ser_lib, "default":init_player}
-
 EXIT_CHARS = {"q", "exit"}
 
 
@@ -62,6 +60,18 @@ def replay(bu):
     init_player(bu.song["url"], bu)
 
 
+def search_table():
+    divider()
+    sf.ser_lib()
+    divider()
+
+
+def delete_song():
+    divider()
+    sf.del_a_song()
+    divider()
+
+
 def single_play(bu):
     cmd_input = input("[>] song URL [played only once]: ")
     if "https" not in cmd_input:
@@ -85,6 +95,8 @@ def correct_title(bu):
     cmd_input = input("[>] index of title to correct: ")
     if cmd_input.isnumeric():
         cmd_num = int(cmd_input)
+        if input("Are you sure? [y/N]") not in {"y", "Y"}:
+            return
         if cmd_num not in bu.table.index:
             print("[TRY AGAIN], number not on list")
         else:
@@ -95,27 +107,40 @@ def correct_title(bu):
             bu.show_article()
 
 
+def command_help():
+    print("Command list: ")
+    print("  - ser :: search for song")
+    print("  - del :: delete a song")
+    print("  - correct title :: remove unusual characters from title")
+    print("  - tab :: print the list of songs")
+    print("  - date :: print a list where the songs are arranged by date, descending")
+    print("  - r :: replay a song")
+    print("  - single :: play a url without adding it to the library")
+    print("  - help :: prints this list")
+    print("  - random :: doesn't work, don't use")
+
+
 def decision_tree(bu):
     prompt = "[>] URL or song Number /quit - 'q'/ [>]: "
     cmd_input = input(prompt)
     if cmd_input in EXIT_CHARS:
         exit()
     elif cmd_input == "ser":
-        divider()
-        sf.ser_lib()
-        divider()
+        search_table()
     elif cmd_input == "del":
-        divider()
-        sf.del_a_song()
-        divider()
+        delete_song()
+    elif cmd_input == "correct title":
+        correct_title(bu)
     elif cmd_input == "tab":
         bu.show_article()
+    elif cmd_input == "date":
+        bu.show_article_by_date()
     elif cmd_input == "r":
         replay(bu)
     elif cmd_input == "single":
         single_play(bu)
-    elif cmd_input == "correct title":
-        correct_title(bu)
+    elif cmd_input == "help":
+        command_help()
     elif cmd_input == "random":
         print("\n[RETARD WARNING] I disabled it, retard.\n")
         return
