@@ -5,6 +5,10 @@ from modules import search_text as st
 
 
 def del_a_song():
+    """
+        Asks for an index corresponding to a song from the library, and makes
+        sure the user really wants to delete it (as it is final).
+    """
     df = ls.pull_csv_as_df()
     cmd_input = input("Song to delete (via index): ")
     if not cmd_input.isnumeric():
@@ -26,6 +30,11 @@ def del_a_song():
 
 
 def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5) -> pd.DataFrame:
+    """
+        s_word :: the string to search for.
+        lib :: a dataframe that contains the titles (search pool)
+        cutoff :: number matches to display
+    """
     df = lib
     df["dis"] = lib.apply(
         lambda row: st.token_distance_list(s_word, row["title"]), axis=1
@@ -47,6 +56,10 @@ def find_options(cmd_input):
 
 
 def ser_lib():
+    """
+        Asks for a string input and searches the library for the closest
+        matching titles.
+    """
     lib = ls.pull_csv_as_df()
     cmd_input = input("Search [optional: --cutoff=int]: ")
     s_word, cutoff = find_options(cmd_input)
