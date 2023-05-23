@@ -1,18 +1,18 @@
 yt.py
 =====
 
-how use:
+How use:
 --------
-Really not optimised for other use. But you can give it a try.
+Really not optimised for others to use. But you can give it a try.
  - rename the music table "data/test-table.csv" to "data/music_table.csv" to
  start out somewhere. You can personalize it later.
  - somehow make it happen, that you are able to run the `yt.py` script. That is
  the main one. Paths will be a problem I think. What works for me is to run the
  script with these batch commands:
-    `cd C:\<your path>\yt-player`
-    `C:\<path to the yt-player environment>\python.exe C:\<your path>\yt-player\yt.py`
+    `cd C:\<your path>\yt-player`  
+    `C:\<path to the yt-player environment>\python.exe C:\<your path>\yt-player\yt.py`  
 
-commands to use in the program:
+Commands to use in the program:
 -------------------------------
 you can input these commands to do stuff:
  - ser :: search for song title
