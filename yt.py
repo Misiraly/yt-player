@@ -12,17 +12,17 @@ EXIT_CHARS = {"q", "exit"}
 
 def divider():
     """
-        Use it to visually divide blocks on the terminal. 
-    """    
+    Use it to visually divide blocks on the terminal.
+    """
     print("-" * 80)
 
 
 def playTheSong(url):
     """
-        Play a video from a given url, and return it as as an object with some
-        info about the video.
+    Play a video from a given url, and return it as as an object with some
+    info about the video.
     """
-    
+
     ydl_opts = {"format": "bestaudio"}
     with YoutubeDL(ydl_opts) as ydl:
         song_info = ydl.extract_info(url, download=False)
@@ -33,7 +33,7 @@ def playTheSong(url):
 
 def play_on_list(cmd_input, bu):
     """
-        Plays a song that is tracked by our library.
+    Plays a song that is tracked by our library.
     """
     cmd_num = int(cmd_input)
     if cmd_num not in bu.table.index:
@@ -47,7 +47,7 @@ def play_on_list(cmd_input, bu):
 
 def play_new(cmd_input, bu):
     """
-        Play a song not yet tracked by our library.
+    Play a song not yet tracked by our library.
     """
     if "https" not in cmd_input:
         print("[TRY AGAIN], can't comprehend")
@@ -64,9 +64,9 @@ def play_new(cmd_input, bu):
 
 def init_player(cmd_input, bu):
     """
-        If we get an integer input, we assume it refers to a song already in our
-        library. Otherwise we handle it as a new song that needs to be added to
-        the library.
+    If we get an integer input, we assume it refers to a song already in our
+    library. Otherwise we handle it as a new song that needs to be added to
+    the library.
     """
     if cmd_input.isnumeric():
         play_on_list(cmd_input, bu)
@@ -77,8 +77,8 @@ def init_player(cmd_input, bu):
 
 def replay(bu):
     """
-        Replays the song saved in the `BaseInterface` object (bu). If it wasn't
-        added to the library yet, it means it will be added.
+    Replays the song saved in the `BaseInterface` object (bu). If it wasn't
+    added to the library yet, it means it will be added.
     """
     init_player(bu.song["url"], bu)
 
@@ -97,11 +97,11 @@ def delete_song():
 
 def single_play(bu):
     """
-        Plays a song but doesn't add it to the list of songs. However it is
-        recorded in the `BaseInterface` object (bu), thus will be tracked after
-        replay.
+    Plays a song but doesn't add it to the list of songs. However it is
+    recorded in the `BaseInterface` object (bu), thus will be tracked after
+    replay.
     """
-    
+
     cmd_input = input("[>] song URL [played only once]: ")
     if "https" not in cmd_input:
         print("[TRY AGAIN], can't comprehend")
@@ -122,8 +122,8 @@ def single_play(bu):
 
 def correct_title(bu):
     """
-        Uses the `correct_title()` function from `side_functions`. Makes sure
-        the user corrects the title it actually wants to correct as it is final.
+    Uses the `correct_title()` function from `side_functions`. Makes sure
+    the user corrects the title it actually wants to correct as it is final.
     """
     cmd_input = input("[>] index of title to correct: ")
     if cmd_input.isnumeric():
@@ -155,7 +155,7 @@ def command_help():
 
 def decision_tree(bu):
     """
-        Decides what to execute given an input from the terminal.
+    Decides what to execute given an input from the terminal.
     """
     print("[ser : del : correct title : tab : date : r : single : help]")
     prompt = "[>] URL or song Number /quit - 'q'/ [>]: "

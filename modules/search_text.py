@@ -43,15 +43,15 @@ REPLACE_CHAR = {
 
 def qsp(tosort, leq):
     """
-        tosort :: a list of two-entry lists, where the first entry is an index, 
-        and the second entry is a value to sort by.
-        leq :: a function defining a less-than-or-equal relation
-        
-        Chooses a pivot element from the list, and assigns all elements less-
-        -than-or-equal to a list by its "left" (`l`) and all the elements
-        strictly greater to a list by its "right" (`r`). Returns "left" list,
-        pivot element (as a list) and the "right" list.
-    """    
+    tosort :: a list of two-entry lists, where the first entry is an index,
+    and the second entry is a value to sort by.
+    leq :: a function defining a less-than-or-equal relation
+
+    Chooses a pivot element from the list, and assigns all elements less-
+    -than-or-equal to a list by its "left" (`l`) and all the elements
+    strictly greater to a list by its "right" (`r`). Returns "left" list,
+    pivot element (as a list) and the "right" list.
+    """
     l, r = [], []
     pivot = tosort[-1]
     l = [el for el in tosort[:-1] if leq(el[1], pivot[1])]
@@ -61,11 +61,11 @@ def qsp(tosort, leq):
 
 def qs_eng(tosort, leq):
     """
-        tosort :: a list of two-entry lists, where the first entry is an index, 
-        and the second entry is a value to sort by.
-        leq :: a function defining a less-than-or-equal relation
-        
-        Uses recursion to return a list with indices sorted by values.
+    tosort :: a list of two-entry lists, where the first entry is an index,
+    and the second entry is a value to sort by.
+    leq :: a function defining a less-than-or-equal relation
+
+    Uses recursion to return a list with indices sorted by values.
     """
     if len(tosort) <= 1:
         return tosort
@@ -77,18 +77,18 @@ def qs_eng(tosort, leq):
 
 def qs_df(df, col, leq, cutoff=5):
     """
-        df :: pandas.DataFrame object
-        col :: column to sort by
-        leq :: a function defining a less-than-or-equal relation for two values,
-        ie, leq(a,b) -> True if a <= b etc... reason is that this allows for
-        user defined relation.
-        cutoff :: the number of elements that we want to return from the `top`
-        of the list.
-        
-        Applies the quick-sort algorithm to a DataFrame by on one of it's
-        columns and based on a user defined less-than-or-equal relation. The
-        algorithm actually runs on an array to speed up sorting. DataFrames are
-        slower to iterate through and to change rows.
+    df :: pandas.DataFrame object
+    col :: column to sort by
+    leq :: a function defining a less-than-or-equal relation for two values,
+    ie, leq(a,b) -> True if a <= b etc... reason is that this allows for
+    user defined relation.
+    cutoff :: the number of elements that we want to return from the `top`
+    of the list.
+
+    Applies the quick-sort algorithm to a DataFrame by on one of it's
+    columns and based on a user defined less-than-or-equal relation. The
+    algorithm actually runs on an array to speed up sorting. DataFrames are
+    slower to iterate through and to change rows.
     """
     ilist = df.index.values.tolist()
     dislist = df[col].values.tolist()
@@ -99,7 +99,7 @@ def qs_df(df, col, leq, cutoff=5):
     return sdf
 
 
-def qs_part(df, column, leq): # not used
+def qs_part(df, column, leq):  # not used
     l, r = [], []
     pivot = df.tail(1)
     l = [
@@ -120,7 +120,7 @@ def qs_part(df, column, leq): # not used
     return l, pivot, r
 
 
-def quick_sort(df, column, leq): # not used
+def quick_sort(df, column, leq):  # not used
     if len(df) <= 1:
         return df
     l, pivot, r = qs_part(df, column, leq)
@@ -189,19 +189,19 @@ def tokenize_3(streeng):  # not used
 
 def tokenize_neighbor(streeng):
     """
-        Replaces a list of strings where:
-        Replaces characters that usually cannot be understood as part of a word
-        with a whitespace
-        Replaces quirky characters with empty string as they
-        are usually part of a word, just not meaningful in a search...hmm I
-        might revisit this...they are not unintelligable for python after all.
-        Replaces characters with diacritics with non-diacritic equivalent.
-        Splits the string by whitespaces and returns as a list, and concatenates
-        a list of neighboring words concatenated (no empty strings allowed)
-        ie 
-        "what are# yoű)dö^ing?" 
-        --> 
-        ["what","are","you",doing","whatare","areyou","youdoing"]
+    Replaces a list of strings where:
+    Replaces characters that usually cannot be understood as part of a word
+    with a whitespace
+    Replaces quirky characters with empty string as they
+    are usually part of a word, just not meaningful in a search...hmm I
+    might revisit this...they are not unintelligable for python after all.
+    Replaces characters with diacritics with non-diacritic equivalent.
+    Splits the string by whitespaces and returns as a list, and concatenates
+    a list of neighboring words concatenated (no empty strings allowed)
+    ie
+    "what are# yoű)dö^ing?"
+    -->
+    ["what","are","you",doing","whatare","areyou","youdoing"]
     """
     string = streeng.lower()
     for char in SEP_CHAR:
@@ -216,21 +216,7 @@ def tokenize_neighbor(streeng):
     return tokens + neigh_tokens
 
 
-def tokenize_neighbor_2(streeng): # not used
-    # regex proven to be slower than simple .replace()
-    string = unidecode(streeng).lower()
-    # string = streeng.lower()
-    # for char in REPLACE_CHAR:
-    # string = re.sub(char, REPLACE_CHAR[char], string)
-    string = re.sub(reSEP, " ", string)
-    string = re.sub(reIGNORE, "", string)
-    tokens = iter(string.split(" "))
-    tokens = [token for token in tokens if token != ""]
-    neigh_tokens = [tokens[i] + tokens[i + 1] for i in range(len(tokens) - 1)]
-    return tokens + neigh_tokens
-
-
-def melamed_distance_np(in_s1, in_s2, ins_cost=1, del_cost=1, sub_cost=1): # not used
+def melamed_distance_np(in_s1, in_s2, ins_cost=1, del_cost=1, sub_cost=1):  # not used
     # made by chatGPT btw
     s1, s2 = in_s1.lower(), in_s2.lower()
     m, n = len(s1), len(s2)
@@ -260,7 +246,7 @@ def melamed_distance_np(in_s1, in_s2, ins_cost=1, del_cost=1, sub_cost=1): # not
     return dp[m][n]
 
 
-def jaccard_similarity(in_str1, in_str2): # not used
+def jaccard_similarity(in_str1, in_str2):  # not used
     # made by chatGPT btw if I recall correctly
     str1, str2 = in_str1.lower(), in_str2.lower()
     # Convert the input strings to sets of n-grams (substrings)
@@ -274,13 +260,13 @@ def jaccard_similarity(in_str1, in_str2): # not used
     return 1 - intersection / union
 
 
-def combined_similarity(in_str1, in_str2): # not used
+def combined_similarity(in_str1, in_str2):  # not used
     j = jaccard_similarity(in_str1, in_str2)
     m = melamed_distance_np(in_str1, in_str2)
     return j * m
 
 
-def token_distance(search_value, text, cutoff=5): # not used
+def token_distance(search_value, text, cutoff=5):  # not used
     """
     Calculate the tokenized distance of for each pair of strings and create
     a list of sorted match values.
@@ -297,7 +283,7 @@ def token_distance(search_value, text, cutoff=5): # not used
     return np.sum(distance_list) / rec_norm
 
 
-def token_distance_two(search_value, text, cutoff=5): # not used
+def token_distance_two(search_value, text, cutoff=5):  # not used
     """ """
     search_tokens, text_tokens = tokenize_2(search_value), tokenize_2(text)
     distance_list = []
@@ -311,7 +297,7 @@ def token_distance_two(search_value, text, cutoff=5): # not used
     return np.sum(distance_list) / rec_norm
 
 
-def token_distance_three(search_value, text, cutoff=5): # not used
+def token_distance_three(search_value, text, cutoff=5):  # not used
     """
     Calculate the melamed distance between all the possible pair of words,
     and all the possible concatenations of neighboring words. Order the
@@ -322,7 +308,6 @@ def token_distance_three(search_value, text, cutoff=5): # not used
     text_tokens = tokenize_2(text) + tokenize_neighbor(text)
 
     distance_list = []
-    very_close_match = []
     for token1 in search_tokens:
         for token2 in text_tokens:
             distance_list.append(melamed_distance_np(token1, token2))
@@ -351,7 +336,7 @@ def token_distance_list(search_value, text, cutoff=5):
     return distance_list
 
 
-def token_distance_list_2(search_value, text, cutoff=5): # not used
+def token_distance_list_2(search_value, text, cutoff=5):  # not used
     """
     Calculate the melamed distance between all the possible pairs of words,
     and all the possible concatenations of neighboring words but only keep the
@@ -368,7 +353,7 @@ def token_distance_list_2(search_value, text, cutoff=5): # not used
     return distance_list
 
 
-def token_distance_list_3(search_value, text, cutoff=5): # not used
+def token_distance_list_3(search_value, text, cutoff=5):  # not used
     """
     Calculate the melamed distance between all the possible pairs of words,
     and all the possible concatenations of neighboring words but only keep the

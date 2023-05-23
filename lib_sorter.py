@@ -3,18 +3,15 @@ from datetime import datetime
 import pandas as pd
 import regex as re
 
-from modules import formatter
-
 _DELIM = " -- "
-# music_lib = r"data\music_lib.txt"
 music_table = "data/music_table.csv"
 # should have format as in "data/test-table.csv"
 
 
 def divider():
     """
-        Use it to visually divide blocks on the terminal. 
-    """ 
+    Use it to visually divide blocks on the terminal.
+    """
     print("-" * 80)
 
 
@@ -25,8 +22,8 @@ def pull_csv_as_df():
 
 def write_table_to_csv(title_in, url, duration):
     """
-        Given the title, url and duration of a song, writes it into the library.
-        The library is saved after sorting by titles.
+    Given the title, url and duration of a song, writes it into the library.
+    The library is saved after sorting by titles.
     """
     df = pull_csv_as_df()
     if title_in not in df["title"].values:
@@ -41,7 +38,7 @@ def write_table_to_csv(title_in, url, duration):
 
 def correct_title(title_in):
     """
-        Returns a title-string stripped of non-standard characters.
+    Returns a title-string stripped of non-standard characters.
     """
     title = re.sub(r"[^a-zA-Z0-9 ]", "", title_in)
     title = title.lstrip()
@@ -50,18 +47,19 @@ def correct_title(title_in):
 
 def del_from_csv(row_index):
     """
-        Removes a row from the library given the row index.
+    Removes a row from the library given the row index.
     """
     df = pull_csv_as_df()
     new_df = df.drop([row_index]).reset_index(drop=True)
     new_df.to_csv(music_table)
 
-    
+
 # Retained for developer uses, sensibility checks.
 
 
 def pull_as_df(columns=None):
     df = pd.DataFrame(columns=["title", "url", "duration", "add_date"])
+    music_lib = r"data\music_lib.txt"
     with open(music_lib) as r:
         for line in r:
             con = line.split(_DELIM)
@@ -79,11 +77,10 @@ def pull_as_df(columns=None):
         return df[columns]
     return df
 
-    
-    
-    
+
 def inwriter(title_in, url, duration):
     title = title_in.encode("utf-8", errors="ignore").decode("utf-8")
+    music_lib = r"data\music_lib.txt"
     with open(music_lib, "r") as lib:
         text = lib.read()
     if title not in text:
@@ -96,14 +93,14 @@ def inwriter(title_in, url, duration):
                 try:
                     if not con == "":
                         lib.write(con + "\n")
-                except:
+                except Warning:
                     divider()
                     title = correct_title(title)
                     line_to_add = _DELIM.join(
                         [title, url, duration, str(datetime.now())]
                     )
                     lib.write(line_to_add + "\n")
-                    input("[WARNING] title contained verboten characters. Still added.")
+                    input("[WARNING] title bad. Still added.")
                     divider()
 
 
@@ -113,6 +110,7 @@ def pull_songs():
     duration-s, dates of added. Prints indeces and titles.
     """
     tab = []
+    music_lib = r"data\music_lib.txt"
     with open(music_lib) as lib:
         for i, line in enumerate(lib):
             print(str(i) + " " + line.split(_DELIM)[0])
@@ -127,6 +125,7 @@ def pull_music_tab_KILL():
     duration-s, dates of added. Doesn't print.
     """
     tab = []
+    music_lib = r"data\music_lib.txt"
     with open(music_lib) as lib:
         for i, line in enumerate(lib):
             # if "https" in line:
@@ -135,6 +134,7 @@ def pull_music_tab_KILL():
 
 
 def pull_as_lines():
+    music_lib = r"data\music_lib.txt"
     with open(music_lib, "r") as lib:
         lines = lib.readlines()
     return lines
@@ -142,6 +142,7 @@ def pull_as_lines():
 
 def del_music_line(line_to_del):
     lines = pull_as_lines()
+    music_lib = r"data\music_lib.txt"
     with open(music_lib, "w") as lib:
         for line in lines:
             if line_to_del != line:

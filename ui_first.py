@@ -179,9 +179,10 @@ def cli_gui(v_title, v_duration, media):
 
 class BaseInterface:
     """
-        The engine for all the stuff related to the list of songs. Mainly
-        concerned about printing info, but retains some song info as well.
+    The engine for all the stuff related to the list of songs. Mainly
+    concerned about printing info, but retains some song info as well.
     """
+
     page = dict()
     page["header"] = ["\n"] + formatter.abc_rower("  PYTHON MUSIC") + ["\n"]
     page["body"] = list()
@@ -208,7 +209,7 @@ class BaseInterface:
 
     def double_table(self):
         """
-            Arranges the library into two columns and returns it as a list.
+        Arranges the library into two columns and returns it as a list.
         """
         half = len(self.table.index) // 2 + len(self.table.index) % 2
         part_line = self.page_width // 2
@@ -230,8 +231,8 @@ class BaseInterface:
 
     def show_article(self):
         """
-            Prints the library as arranged in `self.double_table()`, and assigns
-            it to the object.
+        Prints the library as arranged in `self.double_table()`, and assigns
+        it to the object.
         """
         self.table = ls.pull_csv_as_df()
         self.double_table()
@@ -243,8 +244,8 @@ class BaseInterface:
 
     def show_article_by_date(self):
         """
-            Prints the library arranged from latest and newest based on the date
-            they were added to the library. The newest is thus on the bottom.
+        Prints the library arranged from latest and newest based on the date
+        they were added to the library. The newest is thus on the bottom.
         """
         df = self.table.sort_values(by="add_date", ascending=False)
         new_article = df["title"].iloc[::-1]
