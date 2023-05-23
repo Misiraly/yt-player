@@ -29,7 +29,7 @@ def del_a_song():
         print("[INFO] deletion stopped.")
 
 
-def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5) -> pd.DataFrame:
+def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5):
     """
     s_word :: the string to search for.
     lib :: a dataframe that contains the titles (search pool)
@@ -41,7 +41,8 @@ def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5) -> pd.DataFr
     )
     if cutoff > len(df.index):
         print(
-            f"[WARNING] Cutoff value ({cutoff}) larger than library length, defaulting to 5"
+            f"[WARNING] Cutoff value ({cutoff}) larger than library length,"
+            + "defaulting to 5"
         )
         cutoff = 5
     sdf = st.qs_df(df, "dis", st.abc_leq, cutoff=cutoff)

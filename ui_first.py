@@ -5,9 +5,6 @@ from multiprocessing import Process, Value
 import lib_sorter as ls
 from modules import formatter
 
-# from random import randint
-
-
 STATUS_ICON = {
     "p": "(||)",
     "s": "(■) ",
@@ -20,6 +17,10 @@ STATUS_CHAR = {"p", "s", "l", "r", "q", "n"}
 
 
 def count(seconds, v: Value):
+    """
+    Counts down to `seconds` and passes exit code to trans-process variable if
+    countdown ended. Exits countdown if trans-process variable has exit value.
+    """
     i = seconds
     while v.value != "q" and i > 0:
         time.sleep(0.125)
@@ -30,6 +31,9 @@ def count(seconds, v: Value):
 
 
 def ask(v: Value):
+    """
+    Checks for key push event and passes it to the trans-process variable.
+    """
     key = v.value
     while key != "q":
         # if we don't check for this below, then the Process actually DOESN'T
@@ -41,6 +45,11 @@ def ask(v: Value):
 
 
 class ProgressBar:
+    """
+    A class to showcase and modify a progress bar that keeps track of
+    time.
+    """
+
     def __init__(self, seconds, start_time):
         self.scr_l = 60
         left_side = ""
@@ -67,9 +76,15 @@ class ProgressBar:
         self.key = "l"
 
     def pause(self):
+        """
+        Changes status of `self.down` to opposite.
+        """
         self.down = not self.down
 
     def print_bar(self, key):
+        """
+        Prints a progress bar based on the elapsed time.
+        """
         if not self.down:
             self.c_time = time.time() - self.start_time - self.down_time
         ratio = self.c_time / self.seconds
@@ -86,6 +101,9 @@ class ProgressBar:
 
 
 def get_seconds(formatted_input: str = 0):
+    """
+    Inverse of formatted_time (below), not actually used.
+    """
     if formatted_input == 0:
         print("[INFO] This has no length.")
         return 0
@@ -94,6 +112,12 @@ def get_seconds(formatted_input: str = 0):
 
 
 def formatted_time(seconds, is_long=False):
+    """
+    seconds :: integer
+    is_long :: boolean, whether seconds are more than an hour
+
+    eg 123 -> 02:03, 3673 -> 01:01:13
+    """
     sec = int(seconds)
     hour = str(sec // 3600)
     hour = "0" * (2 - len(hour)) + hour
@@ -107,6 +131,9 @@ def formatted_time(seconds, is_long=False):
 
 
 def player_info(title, seconds, info_length=60):
+    """
+    Prints necessary info about a song.
+    """
     print("-" * info_length)
     title_list = formatter.line_breaker(str(title), info_length - 2)
     left_marge = " " * 15
@@ -119,29 +146,36 @@ def player_info(title, seconds, info_length=60):
 
 
 def player_loop(media, v_duration, v: Value):
+    """
+    While media is playing, checks for user input and executes accordingly.
+    """
     start_time = time.time()
     key = v.value
     Bar = ProgressBar(v_duration, start_time)
     while key != "q":
         if key == "p":
+            # pause
             Bar.pause_time = time.time()
             Bar.down_time = time.time() - Bar.pause_time
             media.pause()
             Bar.pause()
             v.value = "b"
         elif key == "s":
+            # stop
             media.stop()
             Bar.down = True
             Bar.c_time = 0
             Bar.start_time = time.time()
             v.value = "n"
         elif key == "l":
+            # play
             if Bar.pause_time != 0:
                 Bar.down_time = time.time() - Bar.pause_time
             media.play()
             Bar.pause()
             v.value = "n"
         elif key == "r":
+            # replay
             media.stop()
             media.play()
             Bar.start_time = time.time()
@@ -155,8 +189,12 @@ def player_loop(media, v_duration, v: Value):
 
 
 def cli_gui(v_title, v_duration, media):
+    """
+    This handles user inputs and graphic output for the song being played.
+    """
     player_info(v_title, v_duration)
     key = "n"
+    # variable accessible by parallel processes
     v = Value("u", key)
     p_count = Process(
         target=count,
@@ -166,9 +204,11 @@ def cli_gui(v_title, v_duration, media):
         ),
     )
     p_ask = Process(target=ask, args=(v,))
+    # start processes
     p_count.start()
     p_ask.start()
     player_loop(media, v_duration, v)
+    # stop processes, media and cleanup
     p_count.terminate()
     p_ask.terminate()
     p_count.join()
