@@ -1,11 +1,11 @@
+from random import randint
+
 import vlc
 from yt_dlp import YoutubeDL
 
 import lib_sorter as ls
 import side_functions as sf
 import ui_first
-
-# from random import randint
 
 EXIT_CHARS = {"q", "exit"}
 
@@ -43,6 +43,19 @@ def play_on_list(cmd_input, bu):
         song_info, media = playTheSong(bu.song["url"])
         ui_first.cli_gui(bu.song["title"], song_info["duration"], media)
         bu.print_closer()
+
+
+def play_random(bu):
+    """
+    Plays a song that is tracked by our library.
+    """
+    r = randint(0, len(bu.table.index) - 1)
+    bu.song = bu.table.iloc[r]
+    print("\nPlaying a random song...\n")
+    song_info, media = playTheSong(bu.song["url"])
+    ui_first.cli_gui(bu.song["title"], song_info["duration"], media)
+    bu.print_closer()
+    bu.show_article()
 
 
 def play_new(cmd_input, bu):
@@ -179,9 +192,7 @@ def decision_tree(bu):
     elif cmd_input == "help":
         command_help()
     elif cmd_input == "random":
-        print("\n[RETARD WARNING] I disabled it, retard.\n")
-        return
-        # return table.iloc[randint(0,len(table.index))]['url']
+        play_random(bu)
     else:
         init_player(cmd_input, bu)
 

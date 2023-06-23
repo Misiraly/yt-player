@@ -39,7 +39,11 @@ def ask(v: Value):
         # if we don't check for this below, then the Process actually DOESN'T
         # STOP or FUCKS UP or smth even after TERMINATING IT. Cuh
         if msvcrt.kbhit():
-            key = msvcrt.getch().decode("ASCII").lower()
+            try:
+                key = msvcrt.getch().decode("ASCII").lower()
+            except:
+                # non-ascii char inputted
+                pass
             v.value = key
         time.sleep(0.05)
 
