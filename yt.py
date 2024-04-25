@@ -1,5 +1,4 @@
 import numpy as np
-
 import vlc
 from yt_dlp import YoutubeDL
 from yt_dlp.utils import DownloadError
@@ -27,9 +26,9 @@ def playTheSong(url):
     info about the video.
     """
 
-    ydl_opts = {"format": "bestaudio", 'no_check_certificate': True}
+    ydl_opts = {"format": "bestaudio", "no_check_certificate": True}
     with YoutubeDL(ydl_opts) as ydl:
-            song_info = ydl.extract_info(url, download=False)
+        song_info = ydl.extract_info(url, download=False)
     media = vlc.MediaPlayer(song_info["url"])
     return song_info, media
 
@@ -50,7 +49,11 @@ def play_on_list(cmd_input, bu):
 
 
 def play_playlist(playlist, bu, type):
-    info = "SHUFFLE" if type == "shuffle" else "PLAYING BY DATE JOE ROGAN PODCAST BY NIGHT ALL DAY"
+    info = (
+        "SHUFFLE"
+        if type == "shuffle"
+        else "PLAYING BY DATE JOE ROGAN PODCAST BY NIGHT ALL DAY"
+    )
     print(info.center(80, "-"))
     for el in playlist:
         bu.song = bu.table.iloc[el]
@@ -62,9 +65,11 @@ def play_playlist(playlist, bu, type):
             print(f"\ncant play this fucking song: {title}!")
             print("Error in the pleilist... going further!!...")
             continue
-        breaker = ui_first.cli_gui(bu.song["title"], song_info["duration"], media, isplaylist=True)
+        breaker = ui_first.cli_gui(
+            bu.song["title"], song_info["duration"], media, isplaylist=True
+        )
         bu.print_closer()
-        if breaker == 'x':
+        if breaker == "x":
             break
     print("\nthe pleilist... it is so over...\n")
     bu.show_article()
@@ -112,8 +117,8 @@ def play_random_force(bu):
     ui_first.cli_gui(bu.song["title"], song_info["duration"], media)
     bu.print_closer()
     bu.show_article()
-    
-    
+
+
 def play_random(bu):
     """
     Plays a song that is tracked by our library.
@@ -123,9 +128,9 @@ def play_random(bu):
         bu.song = bu.table.iloc[r]
         title = bu.song["title"]
         playit = input(f"\n>> {title}\nPlay this song?[y/N/r]> ")
-        if playit in {'r','R'}:
+        if playit in {"r", "R"}:
             continue
-        if playit not in {'y','Y','p','P'}:
+        if playit not in {"y", "Y", "p", "P"}:
             print("ok... moving on...")
             return
         break
@@ -151,6 +156,7 @@ def shuffle(bu):
     playlist = np.copy(bu.table.index.values)
     np.random.shuffle(playlist)
     play_playlist(playlist, bu, "shuffle")
+
 
 # TODO: ALMOST THE SAME AS ABOVE!!!
 def play_from_newest(bu):
@@ -238,7 +244,7 @@ def rename_title(bu):
         else:
             song = bu.table.iloc[cmd_num]
             new_title = input("New title >")
-            if new_title == '':
+            if new_title == "":
                 new_title = f"__DEFAULT_{str(np.random.randint(0,1000))}"
             ls.del_from_csv(cmd_num)
             ls.write_table_to_csv(new_title, song["url"], song["duration"])
@@ -305,7 +311,7 @@ def decision_tree(bu):
             print(f"cent lpay this: {bu.song['title']}... fuuuuU!")
             print("\nGoing further down the road...")
             return
-            
+
 
 def main_loop():
     bu = ui_first.BaseInterface()

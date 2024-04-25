@@ -12,10 +12,10 @@ STATUS_ICON = {
     "r": "(►) ",
     "status_l": 4,
     "q": "(■) ",
-    "x": "(■)"
+    "x": "(■)",
 }
 STATUS_CHAR = {"p", "s", "l", "r", "q", "n", "x"}
-EXIT_CHAR = {'q','x'}
+EXIT_CHAR = {"q", "x"}
 
 
 def count(seconds, v: Value):
@@ -25,7 +25,7 @@ def count(seconds, v: Value):
     ----------
     seconds : int
         number of seconds to count down
-        
+
     v: Value :
         inter-process variable carrying the state of playing
     """
@@ -37,24 +37,24 @@ def count(seconds, v: Value):
     key = "q"
     v.value = key
 
-    
+
 def check_end(seconds, v: Value, t_v: Value):
     """
 
     Parameters
     ----------
     seconds :
-        
+
     v: Value :
-        
+
     t_v: Value :
 
     """
-    while v.value not in EXIT_CHAR and t_v.value <= seconds-1:
+    while v.value not in EXIT_CHAR and t_v.value <= seconds - 1:
         time.sleep(0.125)
-    key = "q" if v.value != 'x' else 'x'
+    key = "q" if v.value != "x" else "x"
     v.value = key
-    
+
 
 def ask(v: Value):
     """Check for key push event and pass it to the inter-process variable.
@@ -63,7 +63,7 @@ def ask(v: Value):
     ----------
     v: Value :
         inter-process variable
-        
+
 
     Returns
     -------
@@ -112,7 +112,7 @@ class ProgressBar:
             + len(self.full_time)
         )
         self.bar_l = self.scr_l - subtract
-        
+
         self.media = media
         self.start_time = 0
         self.c_time = 0
@@ -124,15 +124,15 @@ class ProgressBar:
 
         Parameters
         ----------
-        key : 
+        key :
             the last key pressed by the user
-            
+
 
         Returns
         -------
 
         """
-        _c_time = self.media.get_time()/1000
+        _c_time = self.media.get_time() / 1000
         ratio = _c_time / self.seconds
         if ratio > 1:
             ratio = 1
@@ -151,12 +151,12 @@ def get_seconds(formatted_input: str = 0):
 
     Parameters
     ----------
-    formatted_input: str : 
+    formatted_input: str :
          (Default value = 0)
 
     Returns
     -------
-        
+
     """
     if formatted_input == 0:
         print("[INFO] This has no length.")
@@ -172,7 +172,7 @@ def formatted_time(seconds, is_long=False):
     ----------
     seconds : integer
         whether seconds are more than an hour
-        
+
     is_long : boolean
          (Default value = False)
 
@@ -198,9 +198,9 @@ def player_info(title, seconds, info_length=60, isplaylist=False):
     Parameters
     ----------
     title :
-        
+
     seconds :
-        
+
     info_length :
          (Default value = 60)
 
@@ -227,13 +227,13 @@ def player_loop(media, v_duration, v: Value, t_v: Value):
     Parameters
     ----------
     media :
-        
+
     v_duration :
-        
+
     v: Value :
-        
+
     t_v: Value :
-        
+
 
     Returns
     -------
@@ -264,7 +264,7 @@ def player_loop(media, v_duration, v: Value, t_v: Value):
         Bar.print_bar(key)
         key = v.value
         time.sleep(0.1)
-    v.value = "q" if key != 'x' else 'x'
+    v.value = "q" if key != "x" else "x"
 
 
 def cli_gui(v_title, v_duration, media, isplaylist=False):
@@ -273,11 +273,11 @@ def cli_gui(v_title, v_duration, media, isplaylist=False):
     Parameters
     ----------
     v_title :
-        
+
     v_duration :
-        
+
     media :
-        
+
 
     Returns
     -------
@@ -288,9 +288,16 @@ def cli_gui(v_title, v_duration, media, isplaylist=False):
     c_time = 0
     # variable accessible by parallel processes
     v = Value("u", key)
-    t_v = Value('f', c_time)
+    t_v = Value("f", c_time)
     p_ask = Process(target=ask, args=(v,))
-    p_check_end = Process(target=check_end, args=(v_duration, v, t_v,))
+    p_check_end = Process(
+        target=check_end,
+        args=(
+            v_duration,
+            v,
+            t_v,
+        ),
+    )
     p_ask.start()
     p_check_end.start()
     player_loop(media, v_duration, v, t_v)
