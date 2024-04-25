@@ -3,7 +3,7 @@
 # create environment:
 #   > mamba env create -f environment.yml
 # update environment:
-#   > mamba env update --file environment.yml --prune
+#   > mamba env update -n yt-player --file environment.yml --prune
 # activate with conda:
 #   > conda activate yt-player
 # deactivate:
@@ -13,17 +13,21 @@ name: yt-player
 channels:
 - conda-forge
 - postelrich
+- travis
 dependencies:
 - python=3.9
-- yt-dlp
 - pip
 - python-levenshtein
+- yt-dlp==2023.09.24
 # developer dependencies
 - black
 - isort
 - flake8
 - pandas
 - regex
+- pyment
+# - ffprobe
+- ffmpeg
 # - unidecode
 # pip dependencies
 - pip:

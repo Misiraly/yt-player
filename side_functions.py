@@ -20,7 +20,7 @@ def del_a_song():
     row_index = int(cmd_input)
     title = df.iloc[row_index]["title"]
     print("Are you sure to delete the song: ")
-    print(" > " + title)
+    print(f"> {title}")
     make_sure = input("? [y/N]: ")
     if make_sure in {"y", "Y"}:
         ls.del_from_csv(row_index)
@@ -50,19 +50,20 @@ def sorted_by_word(s_word: str, lib: pd.DataFrame, cutoff: int = 5):
 
 
 def find_options(cmd_input):
-    op_STR = " --"
+    op_STR = " --cutoff "
     if op_STR in cmd_input:
         return tuple(cmd_input.split(op_STR))
     return cmd_input, 5
 
 
-def ser_lib():
+def ser_lib(cmd_input=None):
     """
     Asks for a string input and searches the library for the closest
     matching titles.
     """
     lib = ls.pull_csv_as_df()
-    cmd_input = input("Search [optional: --cutoff=int]: ")
+    if cmd_input is None:
+        cmd_input = input("Search [optional: --cutoff {int}]: ")
     s_word, cutoff = find_options(cmd_input)
     s_lib = sorted_by_word(s_word, lib, int(cutoff))
     print(s_lib[["title"]])

@@ -8,7 +8,7 @@ Really not optimised for others to use. But you can give it a try.
  start out somewhere. You can personalize it later.
  - somehow make it happen, that you are able to run the `yt.py` script. That is
  the main one. Paths will be a problem I think. What works for me is to run the
- script with these batch commands:
+ script with these batch commands:  
     `cd C:\<your path>\yt-player`  
     `C:\<path to the yt-player environment>\python.exe C:\<your path>\yt-player\yt.py`  
 
